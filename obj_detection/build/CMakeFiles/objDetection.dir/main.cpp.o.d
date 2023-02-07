@@ -327,4 +327,5 @@ CMakeFiles/objDetection.dir/main.cpp.o: \
  /usr/include/c++/7/bits/fstream.tcc /usr/include/c++/7/numeric \
  /usr/include/c++/7/bits/stl_numeric.h \
  /usr/local/include/opencv4/opencv2/core/core.hpp \
- /usr/include/c++/7/iterator /usr/include/c++/7/bits/stream_iterator.h
+ /usr/include/c++/7/iterator /usr/include/c++/7/bits/stream_iterator.h \
+ /home/ryowa/project/CLAVI_CPP/obj_detection/CVQueue.h

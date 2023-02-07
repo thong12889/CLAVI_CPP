@@ -155,38 +155,59 @@ void ObjectDetection::qsort_descent_inplace(std::vector<Object>& objects){
         qsort_descent_inplace(objects, 0, objects.size() - 1);	
 }
 
-void ObjectDetection::nms_sorted_bboxes(const std::vector<Object>& faceobjects, std::vector<int>& picked, float nms_threshold){
-	picked.clear();
+void ObjectDetection::nms_sorted_bboxes(const std::vector<Object>& object){
+        double largest_area = 0;
+        int largest_contour_index;
 
-        const int n = faceobjects.size();
-
-        std::vector<float> areas(n);
-        for(int i = 0; i < n; i++)
+        for( int i = 0; i< object.size(); i++ ) // iterate through each contour. 
         {
-                areas[i] = faceobjects[i].rect_.area();
-        }
-
-        for(int i = 0; i < n; i++)
-        {
-                const Object& a = faceobjects[i];
-
-                int keep = 1;
-                for(int j = 0; j < (int)picked.size(); j++)
-                {
-                        const Object& b = faceobjects[picked[j]];
-
-                        float inter_area = intersection_area(a, b);
-                        float union_area = areas[i] + areas[picked[j]] - inter_area;
-                        if(inter_area / union_area > nms_threshold)
-                        {
-                                keep = 0;
-                        }
+                double a=cv::contourArea( object[i].rect_.area(),false);  //  Find the area of contour
+                if(a>largest_area){
+                        largest_area=a;
+                        largest_contour_index=i;                //Store the index of largest contour
                 }
-
-                if(keep)
-                        picked.push_back(i);
+                this->picked = cv::boundingRect(object[largest_contour_index].rect_.area()); // Find the bounding rectangle for biggest contour
 
         }
+        
+
+        if(picked.area() != 0){
+                std::cout << picked.x <<std::endl;
+        }
+        
+
+        // const int n = object.size();
+
+        // std::vector<float> areas(n);
+        // for(int i = 0; i < n; i++)
+        // {
+        //         areas[i] = object[i].rect_.area();
+        // }
+
+        // for(int i = 0; i < n; i++)
+        // {
+        //         const Object& a = object[i];
+                
+
+        //         int keep = 1;
+        //         for(int j = 0; j < (int)object.size(); j++)
+        //         {
+                        
+        //                 const Object& b = object[this->picked[j]];
+
+        //                 float inter_area = intersection_area(a, b);
+                        
+        //                 float union_area = areas[i] + areas[this->picked[j]] - inter_area;
+        //                 if(inter_area / union_area > this->nms_thresh_)
+        //                 {
+        //                         keep = 0;
+        //                 }
+        //         }
+
+        //         if(keep)
+        //                 this->picked.push_back(i);
+
+        // }
 
 }
 
@@ -379,7 +400,6 @@ void ObjectDetection::DrawResult(std::vector<Object>& objects , cv::Mat& frame, 
 	//Draw results
 	for(int i = 0; i < objects.size(); i++)
 	{
-                std::cout << objects.size() << std::endl;
 		const Object& obj = objects[i];
 	
 		cv::Scalar color = cv::Scalar(0, 255, 0);

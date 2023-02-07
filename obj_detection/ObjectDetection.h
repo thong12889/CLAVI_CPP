@@ -44,7 +44,7 @@ class ObjectDetection{
 		inline float intersection_area(const Object& a, const Object& b);
 		void qsort_descent_inplace(std::vector<Object>& faceobjects, int left, int right);
 		void qsort_descent_inplace(std::vector<Object>& objects);
-		void nms_sorted_bboxes(const std::vector<Object>& faceobjects, std::vector<int>& picked, float nms_threshold);
+		void nms_sorted_bboxes(const std::vector<Object>& faceobjects);
 		void get_candidates(const float* pred, std::vector<long> pred_dim, const int64_t* label, std::vector<Object>& objects);
 		void decode_outputs(const float* pred, std::vector<long> pred_dim, const int64_t* label, std::vector<Object>& objects, float scale, const int img_w, const int img_h);
 		void draw_objects(const cv::Mat& bgr, const std::vector<Object>& objects);
@@ -57,11 +57,12 @@ class ObjectDetection{
 
 		
 	private:
-		const int nms_thresh_ = 0.5;
-		const int bb_conf_thresh_ = 0.3;
+		const float nms_thresh_ = 0.9;
+		const float bb_conf_thresh_ = 0.3;
 		const int input_w_ = 640;
 		const int input_h_ = 640;
 		int num_classes_ = 80;
+		cv::Rect picked;
 };
 
 

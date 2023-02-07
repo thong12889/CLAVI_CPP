@@ -6,6 +6,8 @@
 #include <memory>
 #include <string>
 
+#include "CVQueue.h"
+
 template <typename T> T vectorProduct(std::vector<T>& v){
 	return accumulate(v.begin(), v.end(), 1, std::multiplies<T>());
 }
@@ -26,6 +28,9 @@ int main(int argc, char* argv[]){
 	bool useCUDA = false;
 	const char* useCUDAFlag = "--use_gpu";
 	const char* useCPUFlag = "--use_cpu";
+	const char* useCamera = "0";
+	const char* useVideo = argv[3];
+
 	if(argc == 4)
 	{
 		useCUDA = false;
@@ -100,12 +105,11 @@ int main(int argc, char* argv[]){
 
 	if(Camera)
 	{
-		cv::VideoCapture cap(0);
+		cv::VideoCapture cap(useVideo);
 		if(!cap.isOpened()){
 			return -1;
 		}
 		
-		// cv:: Mat frame = cv::imread("object.jpg");
 		cv:: Mat frame;
 		cv::Mat preprocessedImage;
 
@@ -125,17 +129,17 @@ int main(int argc, char* argv[]){
 		std::vector<long> pred_dim;
 		const int64_t* label;
 		std::vector<long> label_dim;
-		std::vector<size_t> picked;
+		
 
 		//OpenCV Miscellaneous Function
 		//Release buffer
-		for(int j = 0 ; j < 50 ; j++){
+		for(int j = 0 ; j < 10 ; j++){
 			cap >> frame;
 		}
 		tempImg = obj->StaticResize(frame);
 		cv::VideoWriter video = cv::VideoWriter("outcpp.avi",cv::VideoWriter::fourcc('M','J','P','G'), 30 , cv::Size(tempImg.size().width,tempImg.size().height));
 		
-		for(int i = 0 ; i < 100 ; i++){
+		for(int i = 0 ; i < 1000 ; i++){
 			// //Read image file
 			cap >> frame;
 			
@@ -150,7 +154,6 @@ int main(int argc, char* argv[]){
 			tempImg = resizedImage.clone();
 			cv::dnn::blobFromImage(resizedImage, preprocessedImage);
 		
-			
 			
 			inputTensorValues.assign(preprocessedImage.begin<float>(), preprocessedImage.end<float>());
 		
@@ -168,7 +171,11 @@ int main(int argc, char* argv[]){
 			// //Get results
 			obj->decode_outputs(pred, pred_dim, label, objects, scale, img_w, img_h);
 			
+			// obj->nms_sorted_bboxes(objects);
+			
 			obj->DrawResult(objects, tempImg, labels);
+
+			
 			
 			video.write(tempImg);
 			
