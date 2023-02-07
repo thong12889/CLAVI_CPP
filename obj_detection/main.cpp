@@ -26,7 +26,7 @@ int main(int argc, char* argv[]){
 	bool Camera = true;
 	bool Onetime = false;
 	bool useCUDA = false;
-	const char* useCUDAFlag = "--use_gpu";
+	const char* useCUDAFlag = "--use_cuda";
 	const char* useCPUFlag = "--use_cpu";
 	const char* useCamera = "0";
 	const char* useVideo = argv[3];
@@ -67,6 +67,7 @@ int main(int argc, char* argv[]){
 	Ort::SessionOptions session_options;
 	Ort::AllocatorWithDefaultOptions allocator;
 	if(!useCUDA){
+		//CPU
 		session_options.SetIntraOpNumThreads(1);
 		session_options.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_EXTENDED);
 	}
@@ -140,6 +141,7 @@ int main(int argc, char* argv[]){
 		cv::VideoWriter video = cv::VideoWriter("outcpp.avi",cv::VideoWriter::fourcc('M','J','P','G'), 30 , cv::Size(tempImg.size().width,tempImg.size().height));
 		
 		for(int i = 0 ; i < 1000 ; i++){
+			std::cout << "Iteration : " << std::to_string(i) << std::endl;
 			// //Read image file
 			cap >> frame;
 			

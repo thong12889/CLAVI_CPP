@@ -236,6 +236,12 @@ ONNX_RUNTIME_SESSION_INCLUDE_DIRS:PATH=/usr/local/include/onnxruntime/core/sessi
 //The directory containing a CMake configuration file for OpenCV.
 OpenCV_DIR:PATH=/usr/local/lib/cmake/opencv4
 
+//Arguments to supply to pkg-config
+PKG_CONFIG_ARGN:STRING=
+
+//pkg-config executable
+PKG_CONFIG_EXECUTABLE:FILEPATH=/usr/bin/pkg-config
+
 //Value Computed by CMake
 objDetection_BINARY_DIR:STATIC=/home/ryowa/project/CLAVI_CPP/obj_detection/build
 
@@ -244,6 +250,15 @@ objDetection_IS_TOP_LEVEL:STATIC=ON
 
 //Value Computed by CMake
 objDetection_SOURCE_DIR:STATIC=/home/ryowa/project/CLAVI_CPP/obj_detection
+
+//Path to a library.
+pkgcfg_lib_GST_glib-2.0:FILEPATH=/usr/lib/x86_64-linux-gnu/libglib-2.0.so
+
+//Path to a library.
+pkgcfg_lib_GST_gobject-2.0:FILEPATH=/usr/lib/x86_64-linux-gnu/libgobject-2.0.so
+
+//Path to a library.
+pkgcfg_lib_GST_gstreamer-1.0:FILEPATH=/usr/lib/x86_64-linux-gnu/libgstreamer-1.0.so
 
 
 ########################
@@ -395,6 +410,55 @@ CMAKE_UNAME:INTERNAL=/bin/uname
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
 //Details about finding OpenCV
 FIND_PACKAGE_MESSAGE_DETAILS_OpenCV:INTERNAL=[/usr/local][v4.6.0()]
+//Details about finding PkgConfig
+FIND_PACKAGE_MESSAGE_DETAILS_PkgConfig:INTERNAL=[/usr/bin/pkg-config][v0.29.1()]
+GST_CFLAGS:INTERNAL=-pthread;-I/usr/include/gstreamer-1.0;-I/usr/include/glib-2.0;-I/usr/lib/x86_64-linux-gnu/glib-2.0/include
+GST_CFLAGS_I:INTERNAL=
+GST_CFLAGS_OTHER:INTERNAL=-pthread
+GST_FOUND:INTERNAL=1
+GST_INCLUDEDIR:INTERNAL=/usr/include/gstreamer-1.0
+GST_INCLUDE_DIRS:INTERNAL=/usr/include/gstreamer-1.0;/usr/include/glib-2.0;/usr/lib/x86_64-linux-gnu/glib-2.0/include
+GST_LDFLAGS:INTERNAL=-L/usr/lib/x86_64-linux-gnu;-lgstreamer-1.0;-lgobject-2.0;-lglib-2.0
+GST_LDFLAGS_OTHER:INTERNAL=
+GST_LIBDIR:INTERNAL=/usr/lib/x86_64-linux-gnu
+GST_LIBRARIES:INTERNAL=gstreamer-1.0;gobject-2.0;glib-2.0
+GST_LIBRARY_DIRS:INTERNAL=/usr/lib/x86_64-linux-gnu
+GST_LIBS:INTERNAL=
+GST_LIBS_L:INTERNAL=
+GST_LIBS_OTHER:INTERNAL=
+GST_LIBS_PATHS:INTERNAL=
+GST_MODULE_NAME:INTERNAL=gstreamer-1.0
+GST_PREFIX:INTERNAL=/usr
+GST_STATIC_CFLAGS:INTERNAL=-pthread;-I/usr/include/gstreamer-1.0;-I/usr/include/glib-2.0;-I/usr/lib/x86_64-linux-gnu/glib-2.0/include
+GST_STATIC_CFLAGS_I:INTERNAL=
+GST_STATIC_CFLAGS_OTHER:INTERNAL=-pthread
+GST_STATIC_INCLUDE_DIRS:INTERNAL=/usr/include/gstreamer-1.0;/usr/include/glib-2.0;/usr/lib/x86_64-linux-gnu/glib-2.0/include
+GST_STATIC_LDFLAGS:INTERNAL=-L/usr/lib/x86_64-linux-gnu;-lgstreamer-1.0;-lgmodule-2.0;-pthread;-ldl;-lgobject-2.0;-lffi;-lglib-2.0;-pthread;-lpcre;-pthread
+GST_STATIC_LDFLAGS_OTHER:INTERNAL=-pthread
+GST_STATIC_LIBDIR:INTERNAL=
+GST_STATIC_LIBRARIES:INTERNAL=gstreamer-1.0;gmodule-2.0;dl;gobject-2.0;ffi;glib-2.0;pcre
+GST_STATIC_LIBRARY_DIRS:INTERNAL=/usr/lib/x86_64-linux-gnu
+GST_STATIC_LIBS:INTERNAL=
+GST_STATIC_LIBS_L:INTERNAL=
+GST_STATIC_LIBS_OTHER:INTERNAL=
+GST_STATIC_LIBS_PATHS:INTERNAL=
+GST_VERSION:INTERNAL=1.14.5
+GST_gstreamer-1.0_INCLUDEDIR:INTERNAL=
+GST_gstreamer-1.0_LIBDIR:INTERNAL=
+GST_gstreamer-1.0_PREFIX:INTERNAL=
+GST_gstreamer-1.0_VERSION:INTERNAL=
+//ADVANCED property for variable: PKG_CONFIG_ARGN
+PKG_CONFIG_ARGN-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: PKG_CONFIG_EXECUTABLE
+PKG_CONFIG_EXECUTABLE-ADVANCED:INTERNAL=1
 //linker supports push/pop state
 _CMAKE_LINKER_PUSHPOP_STATE_SUPPORTED:INTERNAL=TRUE
+__pkg_config_checked_GST:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_GST_glib-2.0
+pkgcfg_lib_GST_glib-2.0-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_GST_gobject-2.0
+pkgcfg_lib_GST_gobject-2.0-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_GST_gstreamer-1.0
+pkgcfg_lib_GST_gstreamer-1.0-ADVANCED:INTERNAL=1
+prefix_result:INTERNAL=/usr/lib/x86_64-linux-gnu
 

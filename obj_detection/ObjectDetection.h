@@ -18,18 +18,13 @@
 #include <string>
 
 #include <opencv2/core/core.hpp>
+#include <opencv2/opencv.hpp>
 
 #include <fstream>
 #include <iterator>
 #include <string>
 #include <vector>
-
-#include <iterator>
 #include <memory>
-#include <string>
-#include <vector>
-#include <opencv2/opencv.hpp>
-
 
 
 
@@ -37,6 +32,7 @@
 class ObjectDetection{
 	public:
 		ObjectDetection();
+		void SessionInitCLAVI(std::string);
 		template <typename T> friend std::ostream& operator<<(std::ostream& , const std::vector<T>& );
 		cv::Mat StaticResize(cv::Mat &);
 		void generate_grids_and_stride(const int target_w, const int target_h, std::vector<int>& strides, std::vector<GridAndStride>& grid_strides);
@@ -53,6 +49,8 @@ class ObjectDetection{
 		const int GetInputH() const;
 		const int GetInputW() const;
 		void DrawResult(std::vector<Object>& , cv::Mat&, std::vector<std::string>);
+		void UseCUDA();
+		void UseCPU();
 
 
 		
@@ -62,7 +60,11 @@ class ObjectDetection{
 		const int input_w_ = 640;
 		const int input_h_ = 640;
 		int num_classes_ = 80;
-		cv::Rect picked;
+		Ort::Env env;
+		Ort::SessionOptions session_options;
+		Ort::AllocatorWithDefaultOptions allocator;
+		Ort::Session *session_ptr;
+		
 };
 
 

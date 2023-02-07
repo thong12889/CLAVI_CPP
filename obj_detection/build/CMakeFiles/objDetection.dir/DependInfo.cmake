@@ -8,6 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
+  "/home/ryowa/project/CLAVI_CPP/obj_detection/CVQueue.cpp" "CMakeFiles/objDetection.dir/CVQueue.cpp.o" "gcc" "CMakeFiles/objDetection.dir/CVQueue.cpp.o.d"
   "/home/ryowa/project/CLAVI_CPP/obj_detection/ObjectDetection.cpp" "CMakeFiles/objDetection.dir/ObjectDetection.cpp.o" "gcc" "CMakeFiles/objDetection.dir/ObjectDetection.cpp.o.d"
   "/home/ryowa/project/CLAVI_CPP/obj_detection/main.cpp" "CMakeFiles/objDetection.dir/main.cpp.o" "gcc" "CMakeFiles/objDetection.dir/main.cpp.o.d"
   )

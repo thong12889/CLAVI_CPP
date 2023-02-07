@@ -129,6 +129,30 @@ objDetection/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/objDetection.dir/build.make CMakeFiles/objDetection.dir/build
 .PHONY : objDetection/fast
 
+CVQueue.o: CVQueue.cpp.o
+.PHONY : CVQueue.o
+
+# target to build an object file
+CVQueue.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/objDetection.dir/build.make CMakeFiles/objDetection.dir/CVQueue.cpp.o
+.PHONY : CVQueue.cpp.o
+
+CVQueue.i: CVQueue.cpp.i
+.PHONY : CVQueue.i
+
+# target to preprocess a source file
+CVQueue.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/objDetection.dir/build.make CMakeFiles/objDetection.dir/CVQueue.cpp.i
+.PHONY : CVQueue.cpp.i
+
+CVQueue.s: CVQueue.cpp.s
+.PHONY : CVQueue.s
+
+# target to generate assembly for a file
+CVQueue.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/objDetection.dir/build.make CMakeFiles/objDetection.dir/CVQueue.cpp.s
+.PHONY : CVQueue.cpp.s
+
 ObjectDetection.o: ObjectDetection.cpp.o
 .PHONY : ObjectDetection.o
 
@@ -186,6 +210,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... objDetection"
+	@echo "... CVQueue.o"
+	@echo "... CVQueue.i"
+	@echo "... CVQueue.s"
 	@echo "... ObjectDetection.o"
 	@echo "... ObjectDetection.i"
 	@echo "... ObjectDetection.s"

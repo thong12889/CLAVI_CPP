@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/usr/local/include/onnxruntime/core/session -isystem /usr/local/include/opencv4
+CXX_INCLUDES = -I/usr/local/include/onnxruntime/core/session -I/usr/include/gstreamer-1.0 -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -isystem /usr/local/include/opencv4
 
 CXX_FLAGS =  -pthread
 

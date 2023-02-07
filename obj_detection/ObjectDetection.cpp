@@ -36,6 +36,8 @@ template <typename T> std::ostream& operator<<(std::ostream& os, const std::vect
         return os;
 }
 
+
+
 cv::Mat ObjectDetection::StaticResize(cv::Mat &img){
 	float r = std::min(this->input_w_/ (img.cols*1.0), this->input_h_/ (img.rows*1.0));
         int unpad_w = r * img.cols;
@@ -156,26 +158,6 @@ void ObjectDetection::qsort_descent_inplace(std::vector<Object>& objects){
 }
 
 void ObjectDetection::nms_sorted_bboxes(const std::vector<Object>& object){
-        double largest_area = 0;
-        int largest_contour_index;
-
-        for( int i = 0; i< object.size(); i++ ) // iterate through each contour. 
-        {
-                double a=cv::contourArea( object[i].rect_.area(),false);  //  Find the area of contour
-                if(a>largest_area){
-                        largest_area=a;
-                        largest_contour_index=i;                //Store the index of largest contour
-                }
-                this->picked = cv::boundingRect(object[largest_contour_index].rect_.area()); // Find the bounding rectangle for biggest contour
-
-        }
-        
-
-        if(picked.area() != 0){
-                std::cout << picked.x <<std::endl;
-        }
-        
-
         // const int n = object.size();
 
         // std::vector<float> areas(n);
@@ -429,4 +411,25 @@ void ObjectDetection::DrawResult(std::vector<Object>& objects , cv::Mat& frame, 
 		// cv::putText(frame, labels[obj.label_], cv::Point(x, y + label_size.height), cv::FONT_HERSHEY_SIMPLEX, 0.4, txt_color, 1);
 	}
 
+}
+
+void ObjectDetection::SessionInitCLAVI(std::string modelFilepath){
+        Ort::Session session(env, modelFilepath.c_str(), session_options);
+        session_ptr = &session;
+}
+
+void ObjectDetection::UseCPU(){
+        session_options.SetIntraOpNumThreads(1);
+        session_options.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_EXTENDED);
+}
+
+void ObjectDetection::UseCUDA(){
+        OrtCUDAProviderOptions cuda_options;
+        cuda_options.device_id = 0;
+        cuda_options.cudnn_conv_algo_search = OrtCudnnConvAlgoSearch();
+        cuda_options.cuda_mem_limit = static_cast<int>(SIZE_MAX * 1024 * 1024);
+        cuda_options.arena_extend_strategy = 1;
+        cuda_options.do_copy_in_default_stream = 1;
+        session_options.AppendExecutionProvider_CUDA(cuda_options);
+        session_options.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);
 }
