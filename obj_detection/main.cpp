@@ -68,41 +68,52 @@ int main(int argc, char* argv[]){
 	Ort::AllocatorWithDefaultOptions allocator;
 	if(!useCUDA){
 		//CPU
-		session_options.SetIntraOpNumThreads(1);
-		session_options.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_EXTENDED);
+		// session_options.SetIntraOpNumThreads(1);
+		// session_options.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_EXTENDED);
+		obj->UseCPU();
 	}
 	else{
 		//CUDA
-		OrtCUDAProviderOptions cuda_options;
-		cuda_options.device_id = 0;
-		cuda_options.cudnn_conv_algo_search = OrtCudnnConvAlgoSearch();
-		cuda_options.cuda_mem_limit = static_cast<int>(SIZE_MAX * 1024 * 1024);
-		cuda_options.arena_extend_strategy = 1;
-		cuda_options.do_copy_in_default_stream = 1;
-		session_options.AppendExecutionProvider_CUDA(cuda_options);
-		session_options.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);
+		// OrtCUDAProviderOptions cuda_options;
+		// cuda_options.device_id = 0;
+		// cuda_options.cudnn_conv_algo_search = OrtCudnnConvAlgoSearch();
+		// cuda_options.cuda_mem_limit = static_cast<int>(SIZE_MAX * 1024 * 1024);
+		// cuda_options.arena_extend_strategy = 1;
+		// cuda_options.do_copy_in_default_stream = 1;
+		// session_options.AppendExecutionProvider_CUDA(cuda_options);
+		// session_options.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);
+		obj->UseCUDA();
 	}
 
-	Ort::Session session(env, modelFilepath.c_str(), session_options);
 
-	size_t numInputNodes = session.GetInputCount();
-	size_t numOutputNodes = session.GetOutputCount();
+	// Ort::Session session(env, modelFilepath.c_str(), session_options);
 
-	const char* inputName = session.GetInputName(0, allocator);
+	// size_t numInputNodes = session.GetInputCount();
+	// size_t numOutputNodes = session.GetOutputCount();
 
-	Ort::TypeInfo inputTypeInfo = session.GetInputTypeInfo(0);	
-	auto inputTensorInfo = inputTypeInfo.GetTensorTypeAndShapeInfo();
+	// const char* inputName = session.GetInputName(0, allocator);
 
-	ONNXTensorElementDataType inputType = inputTensorInfo.GetElementType();
+	// Ort::TypeInfo inputTypeInfo = session.GetInputTypeInfo(0);
+	// Ort::Unowned<Ort::TensorTypeAndShapeInfo> inputTensorInfo = inputTypeInfo.GetTensorTypeAndShapeInfo();
 
-	std::vector<int64_t> inputDims = inputTensorInfo.GetShape();
+	// ONNXTensorElementDataType inputType = inputTensorInfo.GetElementType();
 
-	const char* outputName0 = session.GetOutputName(0, allocator);
-	const char* outputName1 = session.GetOutputName(1, allocator);
+	// std::vector<int64_t> inputDims = inputTensorInfo.GetShape();
 
-	std::vector<const char*> inputNames{inputName};
-	std::vector<const char*> outputNames{outputName0, outputName1};
+	// const char* outputName0 = session.GetOutputName(0, allocator);
+	// const char* outputName1 = session.GetOutputName(1, allocator);
+
+	// std::vector<const char*> inputNames{inputName};
+	// std::vector<const char*> outputNames{outputName0, outputName1};
+	
+	std::vector<int64_t> inputDims;
+	std::vector<const char*> inputNames;
+	std::vector<const char*> outputNames;
 	std::vector<Ort::Value> inputTensors;
+	size_t numInputNodes;
+	size_t numOutputNodes;
+	Ort::Session session = obj->SessionInitCLAVI(modelFilepath , inputNames, outputNames, inputDims, numInputNodes, numOutputNodes);
+	
 
 	if(Camera)
 	{
@@ -140,12 +151,11 @@ int main(int argc, char* argv[]){
 		tempImg = obj->StaticResize(frame);
 		cv::VideoWriter video = cv::VideoWriter("outcpp.avi",cv::VideoWriter::fourcc('M','J','P','G'), 30 , cv::Size(tempImg.size().width,tempImg.size().height));
 		
-		for(int i = 0 ; i < 1000 ; i++){
+		for(int i = 0 ; i < 100 ; i++){
 			std::cout << "Iteration : " << std::to_string(i) << std::endl;
 			// //Read image file
 			cap >> frame;
 			
-
 			img_w = frame.cols;
 			img_h = frame.rows;
 			scale = std::min(obj->GetInputW() / (frame.cols * 1.0), obj->GetInputH() / (frame.rows * 1.0));

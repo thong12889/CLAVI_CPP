@@ -32,7 +32,7 @@
 class ObjectDetection{
 	public:
 		ObjectDetection();
-		void SessionInitCLAVI(std::string);
+		Ort::Session SessionInitCLAVI(std::string, std::vector<const char*>&, std::vector<const char*>&, std::vector<int64_t>&, size_t& , size_t& );
 		template <typename T> friend std::ostream& operator<<(std::ostream& , const std::vector<T>& );
 		cv::Mat StaticResize(cv::Mat &);
 		void generate_grids_and_stride(const int target_w, const int target_h, std::vector<int>& strides, std::vector<GridAndStride>& grid_strides);
@@ -63,7 +63,17 @@ class ObjectDetection{
 		Ort::Env env;
 		Ort::SessionOptions session_options;
 		Ort::AllocatorWithDefaultOptions allocator;
-		Ort::Session *session_ptr;
+		const char* inputName;
+
+		std::vector<Ort::Value> inputTensors;
+
+		std::vector<int64_t> inputDims;
+		std::vector<const char*> inputNames;
+		std::vector<const char*> outputNames;
+		size_t numInputNodes;
+		size_t numOutputNodes;
+
+
 		
 };
 

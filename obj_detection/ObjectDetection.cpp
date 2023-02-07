@@ -413,9 +413,30 @@ void ObjectDetection::DrawResult(std::vector<Object>& objects , cv::Mat& frame, 
 
 }
 
-void ObjectDetection::SessionInitCLAVI(std::string modelFilepath){
+Ort::Session ObjectDetection::SessionInitCLAVI(std::string modelFilepath, std::vector<const char*>& inputNames, std::vector<const char*>& outputNames, std::vector<int64_t>& inputDims,size_t& numInputNodes, size_t& numOutputNodes){
         Ort::Session session(env, modelFilepath.c_str(), session_options);
-        session_ptr = &session;
+
+        numInputNodes = session.GetInputCount();
+	numOutputNodes = session.GetOutputCount();
+        inputName = session.GetInputName(0, allocator);
+
+	Ort::TypeInfo inputTypeInfo = session.GetInputTypeInfo(0);
+	Ort::Unowned<Ort::TensorTypeAndShapeInfo>  inputTensorInfo = inputTypeInfo.GetTensorTypeAndShapeInfo();
+        
+        ONNXTensorElementDataType inputType = inputTensorInfo.GetElementType();
+
+	inputDims = inputTensorInfo.GetShape();
+
+	const char* outputName0 = session.GetOutputName(0, allocator);
+	const char* outputName1 = session.GetOutputName(1, allocator);
+
+	inputNames.push_back(inputName);
+        outputNames.push_back(outputName0);
+        outputNames.push_back(outputName1);
+
+        return session;
+	
+
 }
 
 void ObjectDetection::UseCPU(){
