@@ -18,7 +18,39 @@
 #include "ObjectDetection.h"
 
 
-ObjectDetection::ObjectDetection(){}
+ObjectDetection::ObjectDetection(std::string modelFilepath){
+        this->modelFilepath = modelFilepath;
+}
+
+
+
+template <typename T> T vectorProduct(std::vector<T>& v){
+	return accumulate(v.begin(), v.end(), 1, std::multiplies<T>());
+}
+
+void ObjectDetection::InferenceInit(cv::Mat& frame_init){
+        this->inputTensorSize = vectorProduct(this->inputDims);
+        this->inputTensorValues.push_back(this->inputTensorSize);
+
+        this->img_w = frame_init.cols;
+        this->img_h = frame_init.rows;
+        this->scale = std::min(this->input_w_ / (frame_init.cols * 1.0), this->input_h_ / (frame_init.rows * 1.0));
+}
+
+cv::Mat ObjectDetection::RunInference(cv::Mat &preprocessedImage){
+        this->inputTensorValues.assign(preprocessedImage.begin<float>(), preprocessedImage.end<float>());
+        this->inputTensors.push_back(Ort::Value::CreateTensor<float>(memoryInfo, this->inputTensorValues.data(), this->inputTensorSize, this->inputDims.data(), this->inputDims.size()));
+        this->outputTensorValues = (*session_ptr_).Run(Ort::RunOptions{nullptr}, this->inputNames.data(), this->inputTensors.data(), this->numInputNodes, this->outputNames.data(), this->numOutputNodes);
+
+        this->pred = this->outputTensorValues[0].GetTensorMutableData<float>();
+        this->pred_dim = this->outputTensorValues[0].GetTensorTypeAndShapeInfo().GetShape();
+        this->label = this->outputTensorValues[1].GetTensorMutableData<int64_t>();
+        this->label_dim = this->outputTensorValues[1].GetTensorTypeAndShapeInfo().GetShape();
+
+        decode_outputs(this->pred, this->pred_dim, this->label, this->objects, this->scale, this->img_w, this->img_h);
+
+
+}
 
 
 template <typename T> std::ostream& operator<<(std::ostream& os, const std::vector<T>& v){
@@ -158,42 +190,12 @@ void ObjectDetection::qsort_descent_inplace(std::vector<Object>& objects){
 }
 
 void ObjectDetection::nms_sorted_bboxes(const std::vector<Object>& object){
-        // const int n = object.size();
-
-        // std::vector<float> areas(n);
-        // for(int i = 0; i < n; i++)
-        // {
-        //         areas[i] = object[i].rect_.area();
-        // }
-
-        // for(int i = 0; i < n; i++)
-        // {
-        //         const Object& a = object[i];
-                
-
-        //         int keep = 1;
-        //         for(int j = 0; j < (int)object.size(); j++)
-        //         {
-                        
-        //                 const Object& b = object[this->picked[j]];
-
-        //                 float inter_area = intersection_area(a, b);
-                        
-        //                 float union_area = areas[i] + areas[this->picked[j]] - inter_area;
-        //                 if(inter_area / union_area > this->nms_thresh_)
-        //                 {
-        //                         keep = 0;
-        //                 }
-        //         }
-
-        //         if(keep)
-        //                 this->picked.push_back(i);
-
-        // }
+        
 
 }
 
 void ObjectDetection::get_candidates(const float* pred, std::vector<long> pred_dim, const int64_t* label, std::vector<Object>& objects){
+        objects.clear();
 	for(int batch = 0; batch < pred_dim[0]; batch++)
         {
                 for(int cand = 0; cand < pred_dim[1]; cand++)
@@ -201,8 +203,9 @@ void ObjectDetection::get_candidates(const float* pred, std::vector<long> pred_d
                         int score = 4;
                         int idx1 = (batch * pred_dim[1] * pred_dim[2]) + cand * pred_dim[2];
                         int idx2 = idx1 + score;
-                        if(pred[idx2] > bb_conf_thresh_)
+                        if(pred[idx2] > this->bb_conf_thresh_)
                         {
+                                std::cout << "bb_thresh : " << std::to_string(this->bb_conf_thresh_) << std::endl;
                                 int label_idx = idx1 / 5;
                                 Object obj;
                                 obj.rect_.x = pred[idx1 + 0];
@@ -378,11 +381,13 @@ const int ObjectDetection::GetInputW() const{
         return this->input_w_;
 }
 
-void ObjectDetection::DrawResult(std::vector<Object>& objects , cv::Mat& frame, std::vector<std::string> labels){
+void ObjectDetection::DrawResult(cv::Mat& frame){
 	//Draw results
-	for(int i = 0; i < objects.size(); i++)
+        // std::cout << "Size : " << std::to_string(this->objects.size()) << std::endl;
+	for(int i = 0; i < this->objects.size(); i++)
 	{
-		const Object& obj = objects[i];
+                // std::cout<< "i : " << i << std::endl;
+		const Object& obj = this->objects[i];
 	
 		cv::Scalar color = cv::Scalar(0, 255, 0);
 		float c_mean = cv::mean(color)[0];
@@ -396,6 +401,7 @@ void ObjectDetection::DrawResult(std::vector<Object>& objects , cv::Mat& frame, 
 	
 		// //Draw bounding box
 		cv::rectangle(frame, obj.rect_, cv::Scalar(0,0,255), 2);
+                cv::putText(frame, std::to_string(obj.label_), cv::Point(obj.rect_.x , obj.rect_.y) , cv::FONT_HERSHEY_SIMPLEX, 0.4,1, 0 );
 	
 		// cv::Size label_size = cv::getTextSize(labels[obj.label_], cv::FONT_HERSHEY_SIMPLEX, 0.4, 1, 0);
 	
@@ -413,26 +419,33 @@ void ObjectDetection::DrawResult(std::vector<Object>& objects , cv::Mat& frame, 
 
 }
 
-Ort::Session ObjectDetection::SessionInitCLAVI(std::string modelFilepath, std::vector<const char*>& inputNames, std::vector<const char*>& outputNames, std::vector<int64_t>& inputDims,size_t& numInputNodes, size_t& numOutputNodes){
-        Ort::Session session(env, modelFilepath.c_str(), session_options);
+Ort::Session ObjectDetection::SessionInit(){
+        
+        Ort::Session session(env, this->modelFilepath.c_str(), session_options);
 
-        numInputNodes = session.GetInputCount();
-	numOutputNodes = session.GetOutputCount();
-        inputName = session.GetInputName(0, allocator);
+
+        //OOP
+
+
+        this->numInputNodes = session.GetInputCount();
+	this->numOutputNodes = session.GetOutputCount();
+        this->inputName = session.GetInputName(0, allocator);
 
 	Ort::TypeInfo inputTypeInfo = session.GetInputTypeInfo(0);
 	Ort::Unowned<Ort::TensorTypeAndShapeInfo>  inputTensorInfo = inputTypeInfo.GetTensorTypeAndShapeInfo();
         
         ONNXTensorElementDataType inputType = inputTensorInfo.GetElementType();
 
-	inputDims = inputTensorInfo.GetShape();
+	this->inputDims = inputTensorInfo.GetShape();
 
 	const char* outputName0 = session.GetOutputName(0, allocator);
 	const char* outputName1 = session.GetOutputName(1, allocator);
 
-	inputNames.push_back(inputName);
-        outputNames.push_back(outputName0);
-        outputNames.push_back(outputName1);
+        this->inputNames.push_back(inputName);
+        this->outputNames.push_back(outputName0);
+        this->outputNames.push_back(outputName1);
+
+        session_ptr_ = &session;
 
         return session;
 	

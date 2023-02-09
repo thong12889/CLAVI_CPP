@@ -8,13 +8,19 @@
 
 #include "CVQueue.h"
 
-template <typename T> T vectorProduct(std::vector<T>& v){
-	return accumulate(v.begin(), v.end(), 1, std::multiplies<T>());
-}
+#include <gst/gst.h>
+#include <gst/app/app.h>
+
+
+std::chrono::time_point<std::chrono::system_clock> start, end;
+
+// template <typename T> T vectorProduct(std::vector<T>& v){
+// 	return accumulate(v.begin(), v.end(), 1, std::multiplies<T>());
+// }
 
 
 int main(int argc, char* argv[]){
-	ObjectDetection *obj = new ObjectDetection();
+	
 
 	if(argc < 4)
 	{
@@ -63,57 +69,31 @@ int main(int argc, char* argv[]){
 	std::string imageFilepath = argv[2];
 	std::string labelFilepath = argv[3];
 
-	Ort::Env env;
-	Ort::SessionOptions session_options;
-	Ort::AllocatorWithDefaultOptions allocator;
+	ObjectDetection *obj = new ObjectDetection(modelFilepath);
+
+	// Ort::Env env;
+	// Ort::SessionOptions session_options;
+	// Ort::AllocatorWithDefaultOptions allocator;
+
+	cv::VideoWriter video;
+	cv:: Mat frame;
+	cv::Mat preprocessedImage;
+	cv::Mat resizedImage;
+
 	if(!useCUDA){
 		//CPU
-		// session_options.SetIntraOpNumThreads(1);
-		// session_options.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_EXTENDED);
 		obj->UseCPU();
 	}
 	else{
 		//CUDA
-		// OrtCUDAProviderOptions cuda_options;
-		// cuda_options.device_id = 0;
-		// cuda_options.cudnn_conv_algo_search = OrtCudnnConvAlgoSearch();
-		// cuda_options.cuda_mem_limit = static_cast<int>(SIZE_MAX * 1024 * 1024);
-		// cuda_options.arena_extend_strategy = 1;
-		// cuda_options.do_copy_in_default_stream = 1;
-		// session_options.AppendExecutionProvider_CUDA(cuda_options);
-		// session_options.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);
 		obj->UseCUDA();
 	}
 
-
-	// Ort::Session session(env, modelFilepath.c_str(), session_options);
-
-	// size_t numInputNodes = session.GetInputCount();
-	// size_t numOutputNodes = session.GetOutputCount();
-
-	// const char* inputName = session.GetInputName(0, allocator);
-
-	// Ort::TypeInfo inputTypeInfo = session.GetInputTypeInfo(0);
-	// Ort::Unowned<Ort::TensorTypeAndShapeInfo> inputTensorInfo = inputTypeInfo.GetTensorTypeAndShapeInfo();
-
-	// ONNXTensorElementDataType inputType = inputTensorInfo.GetElementType();
-
-	// std::vector<int64_t> inputDims = inputTensorInfo.GetShape();
-
-	// const char* outputName0 = session.GetOutputName(0, allocator);
-	// const char* outputName1 = session.GetOutputName(1, allocator);
-
-	// std::vector<const char*> inputNames{inputName};
-	// std::vector<const char*> outputNames{outputName0, outputName1};
+	//Initiailizae Session
+	Ort::Session session = obj->SessionInit();
 	
-	std::vector<int64_t> inputDims;
-	std::vector<const char*> inputNames;
-	std::vector<const char*> outputNames;
-	std::vector<Ort::Value> inputTensors;
-	size_t numInputNodes;
-	size_t numOutputNodes;
-	Ort::Session session = obj->SessionInitCLAVI(modelFilepath , inputNames, outputNames, inputDims, numInputNodes, numOutputNodes);
-	
+	//Read label file
+	std::vector<std::string> labels{obj->readLabels(labelFilepath)};
 
 	if(Camera)
 	{
@@ -122,74 +102,46 @@ int main(int argc, char* argv[]){
 			return -1;
 		}
 		
-		cv:: Mat frame;
-		cv::Mat preprocessedImage;
-
-		//Read label file
-		std::vector<std::string> labels{obj->readLabels(labelFilepath)};
-
-		int img_w;
-		int img_h;
-		float scale;
-		cv::Mat resizedImage, tempImg;
-		size_t inputTensorSize = vectorProduct(inputDims);
-		std::vector<float> inputTensorValues(inputTensorSize);
-		Ort::MemoryInfo memoryInfo = Ort::MemoryInfo::CreateCpu(OrtAllocatorType::OrtArenaAllocator, OrtMemType::OrtMemTypeDefault);
-		std::vector<Ort::Value> outputTensorValues;
-
-		const float* pred;
-		std::vector<long> pred_dim;
-		const int64_t* label;
-		std::vector<long> label_dim;
-		
-
-		//OpenCV Miscellaneous Function
 		//Release buffer
 		for(int j = 0 ; j < 10 ; j++){
 			cap >> frame;
 		}
-		tempImg = obj->StaticResize(frame);
-		cv::VideoWriter video = cv::VideoWriter("outcpp.avi",cv::VideoWriter::fourcc('M','J','P','G'), 30 , cv::Size(tempImg.size().width,tempImg.size().height));
 		
+		obj->InferenceInit(frame);
+
 		for(int i = 0 ; i < 100 ; i++){
+			
 			std::cout << "Iteration : " << std::to_string(i) << std::endl;
 			// //Read image file
 			cap >> frame;
 			
-			img_w = frame.cols;
-			img_h = frame.rows;
-			scale = std::min(obj->GetInputW() / (frame.cols * 1.0), obj->GetInputH() / (frame.rows * 1.0));
-			std::vector<Object> objects;
-
-
 			resizedImage = obj->StaticResize(frame);
-			tempImg = resizedImage.clone();
-			cv::dnn::blobFromImage(resizedImage, preprocessedImage);
-		
 			
-			inputTensorValues.assign(preprocessedImage.begin<float>(), preprocessedImage.end<float>());
-		
 			
-			inputTensors.push_back(Ort::Value::CreateTensor<float>(memoryInfo, inputTensorValues.data(), inputTensorSize, inputDims.data(), inputDims.size()));
-		
-			outputTensorValues = session.Run(Ort::RunOptions{nullptr}, inputNames.data(), inputTensors.data(), numInputNodes, outputNames.data(), numOutputNodes);
-		
-			
-			pred = outputTensorValues[0].GetTensorMutableData<float>();
-			pred_dim = outputTensorValues[0].GetTensorTypeAndShapeInfo().GetShape();
-			label = outputTensorValues[1].GetTensorMutableData<int64_t>();
-			label_dim = outputTensorValues[1].GetTensorTypeAndShapeInfo().GetShape();
-			
-			// //Get results
-			obj->decode_outputs(pred, pred_dim, label, objects, scale, img_w, img_h);
-			
-			// obj->nms_sorted_bboxes(objects);
-			
-			obj->DrawResult(objects, tempImg, labels);
+			if(i == 0){
+				video = cv::VideoWriter("outcpp.avi",cv::VideoWriter::fourcc('M','J','P','G'), 30 , cv::Size(resizedImage.size().width,resizedImage.size().height));
+			}
 
 			
+			//Convert Mat to Float Array
+			cv::dnn::blobFromImage(resizedImage, preprocessedImage);
+
 			
-			video.write(tempImg);
+		
+			start = std::chrono::system_clock::now();
+			//Run Inference
+			obj->RunInference(preprocessedImage);
+			
+			end = std::chrono::system_clock::now();
+			std::chrono::duration<double> elapsed_seconds = end - start;
+			std::time_t end_time = std::chrono::system_clock::to_time_t(end);
+			std::cout << "elapsed time: " << elapsed_seconds.count() << "s\n";
+		
+			obj->DrawResult(resizedImage);
+
+			
+
+			video.write(resizedImage);
 			
 		
 			// cv::imshow("result", tempImg);
