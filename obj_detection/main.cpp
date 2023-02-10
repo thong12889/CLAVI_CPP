@@ -1,27 +1,110 @@
 #include <iostream>
-#include "ObjectDetection.h"
-#include <vector>
+#include "opencv2/opencv.hpp"
+#include "CVQueue.h"
+#include <thread>
 
 #include <iterator>
 #include <memory>
 #include <string>
 
-#include "CVQueue.h"
+#include "ObjectDetection.h"
 
-#include <gst/gst.h>
-#include <gst/app/app.h>
+#include <onnxruntime_cxx_api.h>
 
+CVQueue *q = new CVQueue(1);
+cv::Mat img_resize;
 
-std::chrono::time_point<std::chrono::system_clock> start, end;
+int const height = 1080;
+int const width = 1920;
+int h_resize , w_resize;
+cv::VideoWriter video;
+bool video_save = false;
+ObjectDetection *obj;
 
-// template <typename T> T vectorProduct(std::vector<T>& v){
-// 	return accumulate(v.begin(), v.end(), 1, std::multiplies<T>());
-// }
+void ThreadQueue(){
+	cv::VideoCapture cap(0); 
+	cv::Mat frame;
+	while(1){
+		cap >> frame;
+		if(frame.empty()){
+			std::cout << "Application closed due to empty frame" << std::endl;
+		}
+		else{
+			q->Enqueue(frame);
+			std::cout << "Enqueue" << std::endl;
+		}
+	}
+	
+	if(!cap.isOpened()){
+			std::cout << "Error opening video stream or file" << std::endl;
+	}
 
+	while(cap.isOpened()){
+		cap >> frame;
+		if(!frame.empty()){
+			q->Enqueue(frame);
+		}
+	}
+}
+
+cv::Mat *ImgResize(cv::Mat img){
+	h_resize = height/img.size().height;
+	w_resize = width/img.size().width;
+	cv::resize(img, img_resize , cv::Size() , h_resize, w_resize);
+	return &img_resize;
+}
+
+void ThreadDisplay(){
+	// cv::Mat *img;
+	cv::Mat temp, show_img, resizedImage, preprocessedImage;
+	Ort::Session session = obj->SessionInit();
+
+	while(1){
+		
+		if(!q->IsEmpty()){
+			temp = q->Dequeue();
+			cv::resize(temp, resizedImage, cv::Size(640, 640));
+			obj->InferenceInit(resizedImage);
+			std::cout << "Init Inference" << std::endl;
+			
+			break;
+		}
+	}
+	
+	
+	while(1){
+		if(!q->IsEmpty()){
+			// img = ImgResize(q->Dequeue());
+			temp = q->Dequeue();
+
+			if(!video_save){
+				video_save = true;
+				video = cv::VideoWriter("out.avi",cv::VideoWriter::fourcc('M','J','P','G'),30, cv::Size(1280,720),true);
+			}
+			if(!temp.empty()){
+				cv::resize(temp, resizedImage, cv::Size(640, 640));
+				cv::dnn::blobFromImage(resizedImage, preprocessedImage);
+				obj->RunInference(preprocessedImage);
+				obj->DrawResult(resizedImage);
+
+				std::cout << "Get Frame" << std::endl;
+				if(video_save){
+					cv::resize(resizedImage, show_img , cv::Size(1280,720));
+					video.write(show_img);
+				}
+				// cv::imshow("RTP" , resizedImage); 
+				// if(cv::waitKey(1) == 'q'){
+				// 	break;
+				// }
+			}
+			else{
+				std::cout << "Empty Frame" << std::endl;
+			}
+		}
+	}
+}
 
 int main(int argc, char* argv[]){
-	
-
 	if(argc < 4)
 	{
 		std::cerr << "Usage CPU: [apps] [path/to/model] [path/to/image] [path/to/labal]" << std::endl; 
@@ -69,16 +152,7 @@ int main(int argc, char* argv[]){
 	std::string imageFilepath = argv[2];
 	std::string labelFilepath = argv[3];
 
-	ObjectDetection *obj = new ObjectDetection(modelFilepath);
-
-	// Ort::Env env;
-	// Ort::SessionOptions session_options;
-	// Ort::AllocatorWithDefaultOptions allocator;
-
-	cv::VideoWriter video;
-	cv:: Mat frame;
-	cv::Mat preprocessedImage;
-	cv::Mat resizedImage;
+	obj = new ObjectDetection(modelFilepath);
 
 	if(!useCUDA){
 		//CPU
@@ -87,74 +161,15 @@ int main(int argc, char* argv[]){
 	else{
 		//CUDA
 		obj->UseCUDA();
+		std::cout << "Use CUDA" << std::endl;
 	}
 
-	//Initiailizae Session
-	Ort::Session session = obj->SessionInit();
 	
-	//Read label file
-	std::vector<std::string> labels{obj->readLabels(labelFilepath)};
 
-	if(Camera)
-	{
-		cv::VideoCapture cap(useVideo);
-		if(!cap.isOpened()){
-			return -1;
-		}
-		
-		//Release buffer
-		for(int j = 0 ; j < 10 ; j++){
-			cap >> frame;
-		}
-		
-		obj->InferenceInit(frame);
 
-		for(int i = 0 ; i < 100 ; i++){
-			
-			std::cout << "Iteration : " << std::to_string(i) << std::endl;
-			// //Read image file
-			cap >> frame;
-			
-			resizedImage = obj->StaticResize(frame);
-			
-			
-			if(i == 0){
-				video = cv::VideoWriter("outcpp.avi",cv::VideoWriter::fourcc('M','J','P','G'), 30 , cv::Size(resizedImage.size().width,resizedImage.size().height));
-			}
-
-			
-			//Convert Mat to Float Array
-			cv::dnn::blobFromImage(resizedImage, preprocessedImage);
-
-			
-		
-			start = std::chrono::system_clock::now();
-			//Run Inference
-			obj->RunInference(preprocessedImage);
-			
-			end = std::chrono::system_clock::now();
-			std::chrono::duration<double> elapsed_seconds = end - start;
-			std::time_t end_time = std::chrono::system_clock::to_time_t(end);
-			std::cout << "elapsed time: " << elapsed_seconds.count() << "s\n";
-		
-			obj->DrawResult(resizedImage);
-
-			
-
-			video.write(resizedImage);
-			
-		
-			// cv::imshow("result", tempImg);
-			// const int key = cv::waitKey(30);
-			// if(key == 'q'){
-			// 	break;
-			// }
-		}
-		video.release();
-		// cv::imwrite("output.jpg" , tempImg);
-	}
-	
-	//ReleaseCUDAProviderOptions(cuda_options);
-	cv::destroyAllWindows();
-	return 0;
+	std::thread queue_thread(ThreadQueue);
+	std::thread display_thread(ThreadDisplay);
+	queue_thread.join();
+	display_thread.join();
 }
+
