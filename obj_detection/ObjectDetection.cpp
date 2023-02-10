@@ -293,7 +293,7 @@ void ObjectDetection::draw_objects(const cv::Mat& bgr, const std::vector<Object>
 
 		cv::rectangle(image, cv::Rect(cv::Point(x,y), cv::Size(label_size.width, label_size.height + baseLine)), txt_bk_color, -1);
 
-		cv::putText(image, text, cv::Point(x, y + label_size.height), cv::FONT_HERSHEY_SIMPLEX, 0.4, txt_color, 1);
+		cv::putText(image, text, cv::Point(x, y + label_size.height), cv::FONT_HERSHEY_SIMPLEX, 0.4, cv::Scalar(25,0,0), 1);
 	}
 
 	cv::imwrite("_demo.jpg", image);
