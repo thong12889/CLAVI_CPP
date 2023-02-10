@@ -70,21 +70,22 @@ cv::Mat *ImgResize(cv::Mat img){
 
 void ThreadDisplay(){
 	// cv::Mat *img;
-	cv::Mat temp, show_img;
+	cv::Mat temp, show_img, resizedImage, preprocessedImage;
 	Ort::Session session = obj->SessionInit();
 
 	while(1){
 		
 		if(!q->IsEmpty()){
 			temp = q->Dequeue();
-			obj->InferenceInit(temp);
+			cv::resize(temp, resizedImage, cv::Size(640, 640));
+			obj->InferenceInit(resizedImage);
 			std::cout << "Init Inference" << std::endl;
 			
 			break;
 		}
 	}
 	
-	cv::Mat resizedImage, preprocessedImage;
+	
 	while(1){
 		if(!q->IsEmpty()){
 			// img = ImgResize(q->Dequeue());
