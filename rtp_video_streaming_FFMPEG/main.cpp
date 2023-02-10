@@ -22,14 +22,14 @@ bool video_save = false;
 ObjectDetection *obj;
 
 void ThreadQueue(){
-	// char env[] = "OPENCV_FFMPEG_CAPTURE_OPTIONS=protocol_whitelist;file,rtp,udp";
-	// int rc = putenv(env);
-    // if (rc != 0){
-	// 	std::cout << "Could not set environment variables\n" << std::endl;
-    // }
-	// char input[] = "ffmpegextension.sdp";
-	// cv::VideoCapture cap(input , cv::CAP_FFMPEG);
-	// cv::Mat frame;
+	char env[] = "OPENCV_FFMPEG_CAPTURE_OPTIONS=protocol_whitelist;file,rtp,udp";
+	int rc = putenv(env);
+    if (rc != 0){
+		std::cout << "Could not set environment variables\n" << std::endl;
+    }
+	char input[] = "ffmpegextension.sdp";
+	cv::VideoCapture cap(input , cv::CAP_FFMPEG);
+	cv::Mat frame;
 
 	// while(1){
 	// 	cap >> frame;
@@ -41,18 +41,18 @@ void ThreadQueue(){
 	// 		std::cout << "Enqueue" << std::endl;
 	// 	}
 	// }
-	cv::VideoCapture vcap(0); 
-	cv::Mat frame;
-      if(!vcap.isOpened()){
+	// cv::VideoCapture cap(0); 
+	// cv::Mat frame;
+      if(!cap.isOpened()){
              std::cout << "Error opening video stream or file" << std::endl;
       }
 
-	vcap >> frame;
+	cap >> frame;
 	int frame_width=   frame.size().width;
 	int frame_height=   frame.size().height;
 
 	for(;;){
-		vcap >> frame;
+		cap >> frame;
 		q->Enqueue(frame);
 		
 		
@@ -70,7 +70,7 @@ cv::Mat *ImgResize(cv::Mat img){
 
 void ThreadDisplay(){
 	// cv::Mat *img;
-	cv::Mat temp;
+	cv::Mat temp, show_img;
 	Ort::Session session = obj->SessionInit();
 
 	while(1){
@@ -94,7 +94,7 @@ void ThreadDisplay(){
 
 			if(!video_save){
 				video_save = true;
-				video = cv::VideoWriter("out.avi",cv::VideoWriter::fourcc('M','J','P','G'),30, cv::Size(640,640),true);
+				video = cv::VideoWriter("out.avi",cv::VideoWriter::fourcc('M','J','P','G'),30, cv::Size(1280,720),true);
 			}
 			if(!temp.empty()){
 				cv::resize(temp, resizedImage, cv::Size(640, 640));
@@ -104,9 +104,10 @@ void ThreadDisplay(){
 
 				std::cout << "Get Frame" << std::endl;
 				if(video_save){
-					video.write(resizedImage);
+					cv::resize(resizedImage, show_img , cv::Size(1280,720));
+					video.write(show_img);
 				}
-				// cv::imshow("RTP" , temp); 
+				// cv::imshow("RTP" , resizedImage); 
 				// if(cv::waitKey(1) == 'q'){
 				// 	break;
 				// }
