@@ -35,7 +35,6 @@ class ObjectDetection{
 		void InferenceInit(cv::Mat&);
 		cv::Mat RunInference(cv::Mat&);
 		template <typename T> friend std::ostream& operator<<(std::ostream& , const std::vector<T>& );
-		cv::Mat StaticResize(cv::Mat &);
 		void generate_grids_and_stride(const int target_w, const int target_h, std::vector<int>& strides, std::vector<GridAndStride>& grid_strides);
 		void generate_yolox_proposals(std::vector<GridAndStride> grid_strides, const float* feat_ptr, float prob_threshold, std::vector<Object>& objects);
 		inline float intersection_area(const Object& a, const Object& b);

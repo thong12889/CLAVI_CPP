@@ -22,8 +22,6 @@ ObjectDetection::ObjectDetection(std::string modelFilepath){
         this->modelFilepath = modelFilepath;
 }
 
-
-
 template <typename T> T vectorProduct(std::vector<T>& v){
 	return accumulate(v.begin(), v.end(), 1, std::multiplies<T>());
 }
@@ -70,16 +68,6 @@ template <typename T> std::ostream& operator<<(std::ostream& os, const std::vect
 
 
 
-cv::Mat ObjectDetection::StaticResize(cv::Mat &img){
-	float r = std::min(this->input_w_/ (img.cols*1.0), this->input_h_/ (img.rows*1.0));
-        int unpad_w = r * img.cols;
-        int unpad_h = r * img.rows;
-        cv::Mat re(unpad_h, unpad_w, CV_8UC3);
-        cv::resize(img, re, re.size());
-        cv::Mat out(this->input_h_ , this->input_w_, CV_8UC3, cv::Scalar(114,114,114));
-        re.copyTo(out(cv::Rect(0, 0, re.cols, re.rows)));
-        return out;
-}
 
 void ObjectDetection::generate_grids_and_stride(const int target_w, const int target_h, std::vector<int>& strides, std::vector<GridAndStride>& grid_strides){
 	GridAndStride *gas = new GridAndStride();
