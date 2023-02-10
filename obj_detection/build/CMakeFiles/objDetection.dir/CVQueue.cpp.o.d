@@ -131,6 +131,7 @@ CMakeFiles/objDetection.dir/CVQueue.cpp.o: \
  /usr/include/c++/7/bits/basic_ios.tcc \
  /usr/include/c++/7/bits/ostream.tcc /usr/include/c++/7/istream \
  /usr/include/c++/7/bits/istream.tcc \
+ /home/ryowa/project/CLAVI_CPP/obj_detection/CVQueue.h \
  /usr/local/include/opencv4/opencv2/opencv.hpp \
  /usr/local/include/opencv4/opencv2/opencv_modules.hpp \
  /usr/local/include/opencv4/opencv2/core.hpp \
@@ -314,5 +315,4 @@ CMakeFiles/objDetection.dir/CVQueue.cpp.o: \
  /usr/local/include/opencv4/opencv2/stitching/detail/camera.hpp \
  /usr/local/include/opencv4/opencv2/video.hpp \
  /usr/local/include/opencv4/opencv2/video/tracking.hpp \
- /usr/local/include/opencv4/opencv2/video/background_segm.hpp \
- /home/ryowa/project/CLAVI_CPP/obj_detection/CVQueue.h
+ /usr/local/include/opencv4/opencv2/video/background_segm.hpp

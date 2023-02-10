@@ -166,6 +166,7 @@ CMakeFiles/objDetection.dir/CVQueue.cpp.o: /home/ryowa/project/CLAVI_CPP/obj_det
   /usr/include/c++/7/bits/ostream.tcc \
   /usr/include/c++/7/istream \
   /usr/include/c++/7/bits/istream.tcc \
+  /home/ryowa/project/CLAVI_CPP/obj_detection/CVQueue.h \
   /usr/local/include/opencv4/opencv2/opencv.hpp \
   /usr/local/include/opencv4/opencv2/opencv_modules.hpp \
   /usr/local/include/opencv4/opencv2/core.hpp \
@@ -379,8 +380,7 @@ CMakeFiles/objDetection.dir/CVQueue.cpp.o: /home/ryowa/project/CLAVI_CPP/obj_det
   /usr/local/include/opencv4/opencv2/stitching/detail/camera.hpp \
   /usr/local/include/opencv4/opencv2/video.hpp \
   /usr/local/include/opencv4/opencv2/video/tracking.hpp \
-  /usr/local/include/opencv4/opencv2/video/background_segm.hpp \
-  /home/ryowa/project/CLAVI_CPP/obj_detection/CVQueue.h
+  /usr/local/include/opencv4/opencv2/video/background_segm.hpp
 
 CMakeFiles/objDetection.dir/ObjectDetection.cpp.o: /home/ryowa/project/CLAVI_CPP/obj_detection/ObjectDetection.cpp \
   /usr/include/stdc-predef.h \
@@ -1698,13 +1698,13 @@ CMakeFiles/objDetection.dir/main.cpp.o: /home/ryowa/project/CLAVI_CPP/obj_detect
 
 /usr/local/include/opencv4/opencv2/ml.hpp:
 
+/usr/include/x86_64-linux-gnu/bits/siginfo-consts-arch.h:
+
+/usr/local/include/opencv4/opencv2/imgproc.hpp:
+
 /usr/include/gstreamer-1.0/gst/gstsystemclock.h:
 
 /usr/include/c++/7/bits/ostream.tcc:
-
-/usr/local/include/opencv4/opencv2/opencv.hpp:
-
-/usr/include/c++/7/bits/ptr_traits.h:
 
 /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h:
 
@@ -2174,10 +2174,6 @@ CMakeFiles/objDetection.dir/main.cpp.o: /home/ryowa/project/CLAVI_CPP/obj_detect
 
 /usr/include/c++/7/bits/stl_iterator_base_types.h:
 
-/usr/include/x86_64-linux-gnu/bits/siginfo-consts-arch.h:
-
-/usr/local/include/opencv4/opencv2/imgproc.hpp:
-
 /usr/include/glib-2.0/glib/gversionmacros.h:
 
 /usr/local/include/opencv4/opencv2/flann/sampling.h:
@@ -2207,6 +2203,10 @@ CMakeFiles/objDetection.dir/main.cpp.o: /home/ryowa/project/CLAVI_CPP/obj_detect
 /usr/include/x86_64-linux-gnu/bits/types/__sigset_t.h:
 
 /usr/include/c++/7/vector:
+
+/usr/include/c++/7/bits/ptr_traits.h:
+
+/usr/local/include/opencv4/opencv2/opencv.hpp:
 
 /usr/include/c++/7/numeric:
 
