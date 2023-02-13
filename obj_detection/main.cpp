@@ -11,7 +11,7 @@
 
 #include <onnxruntime_cxx_api.h>
 
-CVQueue *q = new CVQueue(1);
+CVQueue *q = new CVQueue(10);
 cv::Mat img_resize;
 
 int const height = 1080;
@@ -56,16 +56,13 @@ cv::Mat *ImgResize(cv::Mat img){
 
 void ThreadDisplay(){
 	// cv::Mat *img;
-	cv::VideoCapture cap(0); 
-	cv::Mat frame;
 	cv::Mat temp, show_img, resizedImage, preprocessedImage;
 	Ort::Session session = obj->SessionInit();
 
 	while(1){
-		cap >> temp;
-		if(!temp.empty()){
-			// temp = q->Dequeue();
-			
+		
+		if(!q->IsEmpty()){
+			temp = q->Dequeue().clone();
 			cv::resize(temp, resizedImage, cv::Size(640, 640));
 			obj->InferenceInit(resizedImage);
 			std::cout << "Init Inference" << std::endl;
@@ -76,12 +73,12 @@ void ThreadDisplay(){
 	
 	
 	while(1){
-		cap >> temp;
-		if(!temp.empty()){
+		if(!q->IsEmpty()){
 			// img = ImgResize(q->Dequeue());
-			// temp = q->Dequeue();
-			
-			// if(video_save){
+			temp = q->Dequeue().clone();
+
+			// if(!video_save){
+			// 	video_save = true;
 			// 	video = cv::VideoWriter("out.avi",cv::VideoWriter::fourcc('M','J','P','G'),30, cv::Size(1280,720),true);
 			// }
 			if(!temp.empty()){
@@ -91,7 +88,7 @@ void ThreadDisplay(){
 				obj->DrawResult(resizedImage);
 
 				std::cout << "Get Frame" << std::endl;
-				// if(video.isOpened()){
+				// if(video_save){
 				// 	cv::resize(resizedImage, show_img , cv::Size(1280,720));
 				// 	video.write(show_img);
 				// }
@@ -154,8 +151,7 @@ int main(int argc, char* argv[]){
 	std::string modelFilepath = argv[1];
 	std::string labelFilepath = argv[2];
 	std::string imageFilepath = argv[3];
-	
-	
+
 	obj = new ObjectDetection(modelFilepath, labelFilepath);
 
 	if(!useCUDA){
@@ -170,11 +166,10 @@ int main(int argc, char* argv[]){
 
 	
 
-	// std::thread display_thread(ThreadDisplay);
-	// std::thread queue_thread(ThreadQueue);
-	// display_thread.join();
-	ThreadDisplay();
-	// queue_thread.join();
-	
+
+	std::thread queue_thread(ThreadQueue);
+	std::thread display_thread(ThreadDisplay);
+	queue_thread.join();
+	display_thread.join();
 }
 
