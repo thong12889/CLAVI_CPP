@@ -55,18 +55,17 @@ cv::Mat *ImgResize(cv::Mat img){
 }
 
 void ThreadDisplay(){
-	// cv::Mat *img;
 	cv::Mat temp, show_img, resizedImage, preprocessedImage;
-	Ort::Session session = obj->SessionInit();
+	// When end this function, local variable which is **session** will be deleted 
+	//then to keep the address of **session** variable please declare variable to contains in main.
+	Ort::Session session = obj->SessionInit(); 
 
 	while(1){
-		
 		if(!q->IsEmpty()){
 			temp = q->Dequeue();
 			cv::resize(temp, resizedImage, cv::Size(640, 640));
 			obj->InferenceInit(resizedImage);
 			std::cout << "Init Inference" << std::endl;
-			
 			break;
 		}
 	}
@@ -74,7 +73,6 @@ void ThreadDisplay(){
 	
 	while(1){
 		if(!q->IsEmpty()){
-			// img = ImgResize(q->Dequeue());
 			temp = q->Dequeue();
 
 			if(!video_save){
@@ -107,7 +105,7 @@ void ThreadDisplay(){
 int main(int argc, char* argv[]){
 	if(argc < 4)
 	{
-		std::cerr << "Usage CPU: [apps] [path/to/model] [path/to/image] [path/to/labal]" << std::endl; 
+		std::cerr << "Usage CPU: [apps] [path/to/model] [path/to/image] [path/to/labal]" << std::endl;
 		std::cerr <<  "Usage GPU: [apps] [path/to/model] [path/to/image] [path/to/label] --use_cuda" << std::endl;
 		return EXIT_FAILURE;
 	}
@@ -118,7 +116,7 @@ int main(int argc, char* argv[]){
 	const char* useCUDAFlag = "--use_cuda";
 	const char* useCPUFlag = "--use_cpu";
 	const char* useCamera = "0";
-	const char* useVideo = argv[3];
+	const char* useVideo = argv[2];
 
 	if(argc == 4)
 	{
@@ -149,10 +147,11 @@ int main(int argc, char* argv[]){
 
 	std::string instanceName{"object-detection-inference"};
 	std::string modelFilepath = argv[1];
-	std::string imageFilepath = argv[2];
-	std::string labelFilepath = argv[3];
+	std::string labelFilepath = argv[2];
+	std::string imageFilepath = argv[3];
+	
 
-	obj = new ObjectDetection(modelFilepath);
+	obj = new ObjectDetection(modelFilepath, labelFilepath);
 
 	if(!useCUDA){
 		//CPU
@@ -163,13 +162,9 @@ int main(int argc, char* argv[]){
 		obj->UseCUDA();
 		std::cout << "Use CUDA" << std::endl;
 	}
-
 	
-
-
 	std::thread queue_thread(ThreadQueue);
 	std::thread display_thread(ThreadDisplay);
 	queue_thread.join();
 	display_thread.join();
 }
-
