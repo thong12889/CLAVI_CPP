@@ -18,22 +18,10 @@
 #include "ObjectDetection.h"
 
 
-ObjectDetection::ObjectDetection(std::string modelFilepath, std::string labelFilepath){
+ObjectDetection::ObjectDetection(std::string modelFilepath){
         this->modelFilepath = modelFilepath;
-        this->num_classes_ = this->FindIndexClass(labelFilepath);
-        std::cout << "Total Class : " << std::to_string(num_classes_.size()) << std::endl;
 }
 
-std::vector<std::string> ObjectDetection::FindIndexClass(std::string &path){
-        std::vector<std::string> path_temp;
-        std::ifstream input(path);
-        for( std::string line; getline( input, line ); )
-        {
-                path_temp.push_back(line);
-        }
-        return path_temp;
-        
-}
 
 template <typename T> T vectorProduct(std::vector<T>& v){
 	return accumulate(v.begin(), v.end(), 1, std::multiplies<T>());
@@ -83,6 +71,16 @@ template <typename T> std::ostream& operator<<(std::ostream& os, const std::vect
 
 
 
+cv::Mat ObjectDetection::StaticResize(cv::Mat &img){
+	float r = std::min(this->input_w_/ (img.cols*1.0), this->input_h_/ (img.rows*1.0));
+        int unpad_w = r * img.cols;
+        int unpad_h = r * img.rows;
+        cv::Mat re(unpad_h, unpad_w, CV_8UC3);
+        cv::resize(img, re, re.size());
+        cv::Mat out(this->input_h_ , this->input_w_, CV_8UC3, cv::Scalar(114,114,114));
+        re.copyTo(out(cv::Rect(0, 0, re.cols, re.rows)));
+        return out;
+}
 
 void ObjectDetection::generate_grids_and_stride(const int target_w, const int target_h, std::vector<int>& strides, std::vector<GridAndStride>& grid_strides){
 	GridAndStride *gas = new GridAndStride();
@@ -208,6 +206,60 @@ void ObjectDetection::decode_outputs(const float* pred, std::vector<long> pred_d
         }
 }
 
+void ObjectDetection::draw_objects(const cv::Mat& bgr, const std::vector<Object>& objects){
+	const char* class_names[] = {
+		"sunglasses",
+		"hat",
+		"jacket",
+		"shirt",
+		"pants",
+		"shorts"
+		"skirt",
+		"dress",
+		"bag",
+		"shoe",
+		"top"
+	};	
+	cv::Mat image = bgr.clone();
+        for(size_t i = 0; i < objects.size(); i++)
+	{
+		const Object& obj = objects[i];
+
+		cv::Scalar color = cv::Scalar(0, 255, 0);
+		float c_mean = cv::mean(color)[0];
+		cv::Scalar txt_color;
+		if(c_mean > 0.5)
+		{
+			txt_color = cv::Scalar(0,0,0);
+		}
+		else
+		{
+			txt_color = cv::Scalar(255,255,255);
+		}
+
+		cv::rectangle(image, obj.rect_, color * 255, 2);
+
+		char text[256];
+		sprintf(text, "%s %.1f%%", class_names[obj.label_], obj.prob_ * 100);
+
+		int baseLine = 0;
+		cv::Size label_size = cv::getTextSize(text, cv::FONT_HERSHEY_SIMPLEX, 0.4, 1, &baseLine);
+
+		cv::Scalar txt_bk_color = color * 0.7 * 255;
+
+		int x = obj.rect_.x;
+		int y = obj.rect_.y + 1;
+		if(y > image.rows)
+			y = image.rows;
+
+		cv::rectangle(image, cv::Rect(cv::Point(x,y), cv::Size(label_size.width, label_size.height + baseLine)), txt_bk_color, -1);
+
+		cv::putText(image, text, cv::Point(x, y + label_size.height), cv::FONT_HERSHEY_SIMPLEX, 0.4, cv::Scalar(25,0,0), 1);
+	}
+
+	cv::imwrite("_demo.jpg", image);
+	fprintf(stderr, "save vis file\n");
+}
 
 std::ostream& operator<<(std::ostream& os, const ONNXTensorElementDataType& type)
 {
@@ -298,19 +350,19 @@ void ObjectDetection::DrawResult(cv::Mat& frame){
                 // std::cout<< "i : " << i << std::endl;
 		const Object& obj = this->objects[i];
 	
-		cv::Scalar color = cv::Scalar(0, 255, 0);
-		float c_mean = cv::mean(color)[0];
-		cv::Scalar txt_color;
-		if(c_mean > 0.5){
-			txt_color = cv::Scalar(0,0,0);
-		}
-		else{
-			txt_color = cv::Scalar(255,255,255);
-		}
-	
+		// cv::Scalar color = cv::Scalar(0, 255, 0);
+		// float c_mean = cv::mean(color)[0];
+		// cv::Scalar txt_color;
+		// if(c_mean > 0.5){
+		// 	txt_color = cv::Scalar(0,0,0);
+		// }
+		// else{
+		// 	txt_color = cv::Scalar(255,255,255);
+		// }
+                std::vector<std::string> puttext_{"0","1","2","3","4","5","6","7","8","9","10","11","12"};
 		// //Draw bounding box
 		cv::rectangle(frame, obj.rect_, cv::Scalar(0,0,255), 2);
-                // cv::putText(frame, std::to_string(obj.label_), cv::Point(obj.rect_.x , obj.rect_.y) , cv::FONT_HERSHEY_SIMPLEX, 0.4,1, 0 );
+                cv::putText(frame, std::to_string(obj.label_), cv::Point(obj.rect_.x , obj.rect_.y) , cv::FONT_HERSHEY_SIMPLEX, 0.4,1, 0 );
 	
 		// cv::Size label_size = cv::getTextSize(labels[obj.label_], cv::FONT_HERSHEY_SIMPLEX, 0.4, 1, 0);
 	
@@ -321,9 +373,6 @@ void ObjectDetection::DrawResult(cv::Mat& frame){
 		// if(y > frame.rows)
 		// 	y = frame.rows;
 		
-		// // //Draw label
-		// cv::rectangle(frame, cv::Rect(cv::Point(x,y), cv::Size(label_size.width, label_size.height + 0)), txt_bk_color, -1);
-		// cv::putText(frame, labels[obj.label_], cv::Point(x, y + label_size.height), cv::FONT_HERSHEY_SIMPLEX, 0.4, txt_color, 1);
 	}
 
 }
