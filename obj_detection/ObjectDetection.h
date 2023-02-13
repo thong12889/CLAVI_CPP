@@ -28,12 +28,13 @@
 
 class ObjectDetection{
 	public:
-		ObjectDetection(std::string);
+		ObjectDetection(std::string, std::string);
+		std::vector<std::string> FindIndexClass(std::string&);
 		void UseCUDA();
 		void UseCPU();
 		Ort::Session SessionInit();
 		void InferenceInit(cv::Mat&);
-		cv::Mat RunInference(cv::Mat&);
+		void RunInference(cv::Mat&);
 		template <typename T> friend std::ostream& operator<<(std::ostream& , const std::vector<T>& );
 		void generate_grids_and_stride(const int target_w, const int target_h, std::vector<int>& strides, std::vector<GridAndStride>& grid_strides);
 		void generate_yolox_proposals(std::vector<GridAndStride> grid_strides, const float* feat_ptr, float prob_threshold, std::vector<Object>& objects);
@@ -56,10 +57,10 @@ class ObjectDetection{
 	private:
 		std::string modelFilepath;
 		const float nms_thresh_ = 0.5;
-		const float bb_conf_thresh_ = 0.5;
+		const float bb_conf_thresh_ = 0.7;
 		const int input_w_ = 640;
 		const int input_h_ = 640;
-		int num_classes_ = 80;
+		std::vector<std::string> num_classes_;
 		Ort::Env env;
 		Ort::SessionOptions session_options;
 		Ort::AllocatorWithDefaultOptions allocator;

@@ -1,5 +1,5 @@
 CMakeFiles/objDetection.dir/CVQueue.cpp.o: \
- /home/ryowa/project/CLAVI_CPP/obj_detection/CVQueue.cpp \
+ /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/obj_detection/CVQueue.cpp \
  /usr/include/stdc-predef.h /usr/include/c++/7/iostream \
  /usr/include/x86_64-linux-gnu/c++/7/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/7/bits/os_defines.h \
@@ -131,7 +131,7 @@ CMakeFiles/objDetection.dir/CVQueue.cpp.o: \
  /usr/include/c++/7/bits/basic_ios.tcc \
  /usr/include/c++/7/bits/ostream.tcc /usr/include/c++/7/istream \
  /usr/include/c++/7/bits/istream.tcc \
- /home/ryowa/project/CLAVI_CPP/obj_detection/CVQueue.h \
+ /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/obj_detection/CVQueue.h \
  /usr/local/include/opencv4/opencv2/opencv.hpp \
  /usr/local/include/opencv4/opencv2/opencv_modules.hpp \
  /usr/local/include/opencv4/opencv2/core.hpp \

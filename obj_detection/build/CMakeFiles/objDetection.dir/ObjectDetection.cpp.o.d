@@ -1,5 +1,5 @@
 CMakeFiles/objDetection.dir/ObjectDetection.cpp.o: \
- /home/ryowa/project/CLAVI_CPP/obj_detection/ObjectDetection.cpp \
+ /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/obj_detection/ObjectDetection.cpp \
  /usr/include/stdc-predef.h /usr/include/c++/7/iostream \
  /usr/include/x86_64-linux-gnu/c++/7/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/7/bits/os_defines.h \
@@ -322,8 +322,8 @@ CMakeFiles/objDetection.dir/ObjectDetection.cpp.o: \
  /usr/local/include/onnxruntime/core/session/onnxruntime_cxx_api.h \
  /usr/local/include/onnxruntime/core/session/onnxruntime_c_api.h \
  /usr/local/include/onnxruntime/core/session/onnxruntime_cxx_inline.h \
- /home/ryowa/project/CLAVI_CPP/obj_detection/ObjectDetection.h \
- /home/ryowa/project/CLAVI_CPP/obj_detection/GridAndStride.h \
- /home/ryowa/project/CLAVI_CPP/obj_detection/Object.h \
+ /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/obj_detection/ObjectDetection.h \
+ /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/obj_detection/GridAndStride.h \
+ /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/obj_detection/Object.h \
  /usr/include/c++/7/numeric /usr/include/c++/7/bits/stl_numeric.h \
  /usr/include/c++/7/iterator /usr/include/c++/7/bits/stream_iterator.h

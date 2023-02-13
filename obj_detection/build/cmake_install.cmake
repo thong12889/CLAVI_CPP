@@ -1,4 +1,4 @@
-# Install script for directory: /home/ryowa/project/CLAVI_CPP/obj_detection
+# Install script for directory: /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/obj_detection
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/ryowa/project/CLAVI_CPP/obj_detection/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/ryowa/ryowa/nreal/ai/CLAVI_CPP/obj_detection/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

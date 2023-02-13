@@ -56,13 +56,16 @@ cv::Mat *ImgResize(cv::Mat img){
 
 void ThreadDisplay(){
 	// cv::Mat *img;
+	cv::VideoCapture cap(0); 
+	cv::Mat frame;
 	cv::Mat temp, show_img, resizedImage, preprocessedImage;
 	Ort::Session session = obj->SessionInit();
 
 	while(1){
-		
-		if(!q->IsEmpty()){
-			temp = q->Dequeue();
+		cap >> temp;
+		if(!temp.empty()){
+			// temp = q->Dequeue();
+			
 			cv::resize(temp, resizedImage, cv::Size(640, 640));
 			obj->InferenceInit(resizedImage);
 			std::cout << "Init Inference" << std::endl;
@@ -73,14 +76,14 @@ void ThreadDisplay(){
 	
 	
 	while(1){
-		if(!q->IsEmpty()){
+		cap >> temp;
+		if(!temp.empty()){
 			// img = ImgResize(q->Dequeue());
-			temp = q->Dequeue();
-
-			if(!video_save){
-				video_save = true;
-				video = cv::VideoWriter("out.avi",cv::VideoWriter::fourcc('M','J','P','G'),30, cv::Size(1280,720),true);
-			}
+			// temp = q->Dequeue();
+			
+			// if(video_save){
+			// 	video = cv::VideoWriter("out.avi",cv::VideoWriter::fourcc('M','J','P','G'),30, cv::Size(1280,720),true);
+			// }
 			if(!temp.empty()){
 				cv::resize(temp, resizedImage, cv::Size(640, 640));
 				cv::dnn::blobFromImage(resizedImage, preprocessedImage);
@@ -88,14 +91,14 @@ void ThreadDisplay(){
 				obj->DrawResult(resizedImage);
 
 				std::cout << "Get Frame" << std::endl;
-				if(video_save){
-					cv::resize(resizedImage, show_img , cv::Size(1280,720));
-					video.write(show_img);
-				}
-				// cv::imshow("RTP" , resizedImage); 
-				// if(cv::waitKey(1) == 'q'){
-				// 	break;
+				// if(video.isOpened()){
+				// 	cv::resize(resizedImage, show_img , cv::Size(1280,720));
+				// 	video.write(show_img);
 				// }
+				cv::imshow("RTP" , resizedImage); 
+				if(cv::waitKey(1) == 'q'){
+					break;
+				}
 			}
 			else{
 				std::cout << "Empty Frame" << std::endl;
@@ -149,10 +152,11 @@ int main(int argc, char* argv[]){
 
 	std::string instanceName{"object-detection-inference"};
 	std::string modelFilepath = argv[1];
-	std::string imageFilepath = argv[2];
-	std::string labelFilepath = argv[3];
-
-	obj = new ObjectDetection(modelFilepath);
+	std::string labelFilepath = argv[2];
+	std::string imageFilepath = argv[3];
+	
+	
+	obj = new ObjectDetection(modelFilepath, labelFilepath);
 
 	if(!useCUDA){
 		//CPU
@@ -166,10 +170,11 @@ int main(int argc, char* argv[]){
 
 	
 
-
-	std::thread queue_thread(ThreadQueue);
-	std::thread display_thread(ThreadDisplay);
-	queue_thread.join();
-	display_thread.join();
+	// std::thread display_thread(ThreadDisplay);
+	// std::thread queue_thread(ThreadQueue);
+	// display_thread.join();
+	ThreadDisplay();
+	// queue_thread.join();
+	
 }
 
