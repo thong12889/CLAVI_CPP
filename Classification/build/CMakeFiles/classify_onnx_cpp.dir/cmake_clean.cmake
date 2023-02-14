@@ -1,6 +1,6 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/classify_onnx_cpp.dir/classification.cpp.o"
-  "CMakeFiles/classify_onnx_cpp.dir/classification.cpp.o.d"
+  "CMakeFiles/classify_onnx_cpp.dir/main.cpp.o"
+  "CMakeFiles/classify_onnx_cpp.dir/main.cpp.o.d"
   "classify_onnx_cpp"
   "classify_onnx_cpp.pdb"
 )

@@ -1,28 +1,23 @@
 cmake_minimum_required(VERSION 3.13)
 project(classify_onnx_cpp)
 
-add_subdirectory(include)
+add_library(ObjCls ObjectClassification.cpp ObjectClassification.h )
 
+#Find LIB via pkg-config
 find_package(OpenCV REQUIRED)
 find_path(ONNX_RUNTIME_SESSION_INCLUDE_DIRS onnxruntime_cxx_api.h HINTS /usr/local/include/onnxruntime/core/session/)
-
 find_library(ONNX_RUNTIME_LIB onnxruntime HINTS /usr/local/lib)
 
-add_executable(${PROJECT_NAME} main.cpp )
-target_include_directories(${PROJECT_NAME} 
-    PRIVATE ${ONNX_RUNTIME_SESSION_INCLUDE_DIRS} 
+#Link target directories to include
+target_include_directories(ObjCls
+PUBLIC ${ONNX_RUNTIME_SESSION_INCLUDE_DIRS} 
     PUBLIC ${OpenCV_INCLUDE_DIRS} 
-    PUBLIC ${QUEUE_INCLUDE_DIR} 
-    PUBLIC include
     )
+    
+target_link_libraries(ObjCls PUBLIC ${ONNX_RUNTIME_SESSION_INCLUDE_DIRS} )
 
-target_link_directories(${PROJECT_NAME} 
-    PUBLIC include
-)
-
-target_link_libraries(${PROJECT_NAME} 
+target_link_libraries(ObjCls
     PRIVATE ${ONNX_RUNTIME_LIB} 
     PUBLIC ${OpenCV_LIBRARIES} 
-    PUBLIC ${QUEUE_LINK}
-    PUBLIC ObjCls
     )
+

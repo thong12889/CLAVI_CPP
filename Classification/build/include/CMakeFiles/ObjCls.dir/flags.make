@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/usr/local/include/onnxruntime/core/session -I/home/ryowa/ryowa/nreal/ai/CLAVI_CPP/Classification/include -isystem /usr/local/include/opencv4
+CXX_INCLUDES = -I/usr/local/include/onnxruntime/core/session -isystem /usr/local/include/opencv4
 
 CXX_FLAGS = 
 

@@ -1,0 +1,2 @@
+/usr/bin/ar qc libObjCls.a CMakeFiles/ObjCls.dir/ObjectClassification.cpp.o
+/usr/bin/ranlib libObjCls.a

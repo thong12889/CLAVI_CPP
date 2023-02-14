@@ -8,12 +8,11 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/ryowa/ryowa/nreal/ai/CLAVI_CPP/Classification/build/main.cpp" "CMakeFiles/classify_onnx_cpp.dir/main.cpp.o" "gcc" "CMakeFiles/classify_onnx_cpp.dir/main.cpp.o.d"
+  "/home/ryowa/ryowa/nreal/ai/CLAVI_CPP/Classification/include/ObjectClassification.cpp" "include/CMakeFiles/ObjCls.dir/ObjectClassification.cpp.o" "gcc" "include/CMakeFiles/ObjCls.dir/ObjectClassification.cpp.o.d"
   )
 
 # Targets to which this target links.
 set(CMAKE_TARGET_LINKED_INFO_FILES
-  "/home/ryowa/ryowa/nreal/ai/CLAVI_CPP/Classification/build/include/CMakeFiles/ObjCls.dir/DependInfo.cmake"
   )
 
 # Fortran module output directory.

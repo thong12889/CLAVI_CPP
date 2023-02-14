@@ -69,28 +69,28 @@ include CMakeFiles/classify_onnx_cpp.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/classify_onnx_cpp.dir/flags.make
 
-CMakeFiles/classify_onnx_cpp.dir/classification.cpp.o: CMakeFiles/classify_onnx_cpp.dir/flags.make
-CMakeFiles/classify_onnx_cpp.dir/classification.cpp.o: /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/Classification/classification.cpp
-CMakeFiles/classify_onnx_cpp.dir/classification.cpp.o: CMakeFiles/classify_onnx_cpp.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ryowa/ryowa/nreal/ai/CLAVI_CPP/Classification/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/classify_onnx_cpp.dir/classification.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/classify_onnx_cpp.dir/classification.cpp.o -MF CMakeFiles/classify_onnx_cpp.dir/classification.cpp.o.d -o CMakeFiles/classify_onnx_cpp.dir/classification.cpp.o -c /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/Classification/classification.cpp
+CMakeFiles/classify_onnx_cpp.dir/main.cpp.o: CMakeFiles/classify_onnx_cpp.dir/flags.make
+CMakeFiles/classify_onnx_cpp.dir/main.cpp.o: main.cpp
+CMakeFiles/classify_onnx_cpp.dir/main.cpp.o: CMakeFiles/classify_onnx_cpp.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ryowa/ryowa/nreal/ai/CLAVI_CPP/Classification/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/classify_onnx_cpp.dir/main.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/classify_onnx_cpp.dir/main.cpp.o -MF CMakeFiles/classify_onnx_cpp.dir/main.cpp.o.d -o CMakeFiles/classify_onnx_cpp.dir/main.cpp.o -c /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/Classification/build/main.cpp
 
-CMakeFiles/classify_onnx_cpp.dir/classification.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/classify_onnx_cpp.dir/classification.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/Classification/classification.cpp > CMakeFiles/classify_onnx_cpp.dir/classification.cpp.i
+CMakeFiles/classify_onnx_cpp.dir/main.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/classify_onnx_cpp.dir/main.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/Classification/build/main.cpp > CMakeFiles/classify_onnx_cpp.dir/main.cpp.i
 
-CMakeFiles/classify_onnx_cpp.dir/classification.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/classify_onnx_cpp.dir/classification.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/Classification/classification.cpp -o CMakeFiles/classify_onnx_cpp.dir/classification.cpp.s
+CMakeFiles/classify_onnx_cpp.dir/main.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/classify_onnx_cpp.dir/main.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/Classification/build/main.cpp -o CMakeFiles/classify_onnx_cpp.dir/main.cpp.s
 
 # Object files for target classify_onnx_cpp
 classify_onnx_cpp_OBJECTS = \
-"CMakeFiles/classify_onnx_cpp.dir/classification.cpp.o"
+"CMakeFiles/classify_onnx_cpp.dir/main.cpp.o"
 
 # External object files for target classify_onnx_cpp
 classify_onnx_cpp_EXTERNAL_OBJECTS =
 
-classify_onnx_cpp: CMakeFiles/classify_onnx_cpp.dir/classification.cpp.o
+classify_onnx_cpp: CMakeFiles/classify_onnx_cpp.dir/main.cpp.o
 classify_onnx_cpp: CMakeFiles/classify_onnx_cpp.dir/build.make
 classify_onnx_cpp: /usr/local/lib/libonnxruntime.so
 classify_onnx_cpp: /usr/local/lib/libopencv_gapi.so.4.6.0
@@ -101,11 +101,28 @@ classify_onnx_cpp: /usr/local/lib/libopencv_photo.so.4.6.0
 classify_onnx_cpp: /usr/local/lib/libopencv_stitching.so.4.6.0
 classify_onnx_cpp: /usr/local/lib/libopencv_video.so.4.6.0
 classify_onnx_cpp: /usr/local/lib/libopencv_videoio.so.4.6.0
+classify_onnx_cpp: include/libObjCls.a
 classify_onnx_cpp: /usr/local/lib/libopencv_imgcodecs.so.4.6.0
 classify_onnx_cpp: /usr/local/lib/libopencv_dnn.so.4.6.0
 classify_onnx_cpp: /usr/local/lib/libopencv_calib3d.so.4.6.0
 classify_onnx_cpp: /usr/local/lib/libopencv_features2d.so.4.6.0
 classify_onnx_cpp: /usr/local/lib/libopencv_flann.so.4.6.0
+classify_onnx_cpp: /usr/local/lib/libopencv_imgproc.so.4.6.0
+classify_onnx_cpp: /usr/local/lib/libopencv_core.so.4.6.0
+classify_onnx_cpp: /usr/local/lib/libonnxruntime.so
+classify_onnx_cpp: /usr/local/lib/libopencv_gapi.so.4.6.0
+classify_onnx_cpp: /usr/local/lib/libopencv_highgui.so.4.6.0
+classify_onnx_cpp: /usr/local/lib/libopencv_ml.so.4.6.0
+classify_onnx_cpp: /usr/local/lib/libopencv_objdetect.so.4.6.0
+classify_onnx_cpp: /usr/local/lib/libopencv_photo.so.4.6.0
+classify_onnx_cpp: /usr/local/lib/libopencv_stitching.so.4.6.0
+classify_onnx_cpp: /usr/local/lib/libopencv_video.so.4.6.0
+classify_onnx_cpp: /usr/local/lib/libopencv_calib3d.so.4.6.0
+classify_onnx_cpp: /usr/local/lib/libopencv_dnn.so.4.6.0
+classify_onnx_cpp: /usr/local/lib/libopencv_features2d.so.4.6.0
+classify_onnx_cpp: /usr/local/lib/libopencv_flann.so.4.6.0
+classify_onnx_cpp: /usr/local/lib/libopencv_videoio.so.4.6.0
+classify_onnx_cpp: /usr/local/lib/libopencv_imgcodecs.so.4.6.0
 classify_onnx_cpp: /usr/local/lib/libopencv_imgproc.so.4.6.0
 classify_onnx_cpp: /usr/local/lib/libopencv_core.so.4.6.0
 classify_onnx_cpp: CMakeFiles/classify_onnx_cpp.dir/link.txt

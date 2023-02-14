@@ -87,14 +87,14 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/Classification/build/CMakeFiles /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/Classification/build//CMakeFiles/progress.marks
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
+	cd /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/Classification/build && $(CMAKE_COMMAND) -E cmake_progress_start /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/Classification/build/CMakeFiles /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/Classification/build/include//CMakeFiles/progress.marks
+	cd /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/Classification/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 include/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/Classification/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 clean
+	cd /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/Classification/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 include/clean
 .PHONY : clean
 
 # The main clean target
@@ -103,68 +103,56 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 preinstall
+	cd /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/Classification/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 include/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 preinstall
+	cd /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/Classification/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 include/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	$(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/Classification/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
-#=============================================================================
-# Target rules for targets named classify_onnx_cpp
+# Convenience name for target.
+include/CMakeFiles/ObjCls.dir/rule:
+	cd /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/Classification/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 include/CMakeFiles/ObjCls.dir/rule
+.PHONY : include/CMakeFiles/ObjCls.dir/rule
 
-# Build rule for target.
-classify_onnx_cpp: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 classify_onnx_cpp
-.PHONY : classify_onnx_cpp
-
-# fast build rule for target.
-classify_onnx_cpp/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/classify_onnx_cpp.dir/build.make CMakeFiles/classify_onnx_cpp.dir/build
-.PHONY : classify_onnx_cpp/fast
-
-#=============================================================================
-# Target rules for targets named ObjCls
-
-# Build rule for target.
-ObjCls: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 ObjCls
+# Convenience name for target.
+ObjCls: include/CMakeFiles/ObjCls.dir/rule
 .PHONY : ObjCls
 
 # fast build rule for target.
 ObjCls/fast:
-	$(MAKE) $(MAKESILENT) -f include/CMakeFiles/ObjCls.dir/build.make include/CMakeFiles/ObjCls.dir/build
+	cd /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/Classification/build && $(MAKE) $(MAKESILENT) -f include/CMakeFiles/ObjCls.dir/build.make include/CMakeFiles/ObjCls.dir/build
 .PHONY : ObjCls/fast
 
-main.o: main.cpp.o
-.PHONY : main.o
+ObjectClassification.o: ObjectClassification.cpp.o
+.PHONY : ObjectClassification.o
 
 # target to build an object file
-main.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/classify_onnx_cpp.dir/build.make CMakeFiles/classify_onnx_cpp.dir/main.cpp.o
-.PHONY : main.cpp.o
+ObjectClassification.cpp.o:
+	cd /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/Classification/build && $(MAKE) $(MAKESILENT) -f include/CMakeFiles/ObjCls.dir/build.make include/CMakeFiles/ObjCls.dir/ObjectClassification.cpp.o
+.PHONY : ObjectClassification.cpp.o
 
-main.i: main.cpp.i
-.PHONY : main.i
+ObjectClassification.i: ObjectClassification.cpp.i
+.PHONY : ObjectClassification.i
 
 # target to preprocess a source file
-main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/classify_onnx_cpp.dir/build.make CMakeFiles/classify_onnx_cpp.dir/main.cpp.i
-.PHONY : main.cpp.i
+ObjectClassification.cpp.i:
+	cd /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/Classification/build && $(MAKE) $(MAKESILENT) -f include/CMakeFiles/ObjCls.dir/build.make include/CMakeFiles/ObjCls.dir/ObjectClassification.cpp.i
+.PHONY : ObjectClassification.cpp.i
 
-main.s: main.cpp.s
-.PHONY : main.s
+ObjectClassification.s: ObjectClassification.cpp.s
+.PHONY : ObjectClassification.s
 
 # target to generate assembly for a file
-main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/classify_onnx_cpp.dir/build.make CMakeFiles/classify_onnx_cpp.dir/main.cpp.s
-.PHONY : main.cpp.s
+ObjectClassification.cpp.s:
+	cd /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/Classification/build && $(MAKE) $(MAKESILENT) -f include/CMakeFiles/ObjCls.dir/build.make include/CMakeFiles/ObjCls.dir/ObjectClassification.cpp.s
+.PHONY : ObjectClassification.cpp.s
 
 # Help Target
 help:
@@ -175,10 +163,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... ObjCls"
-	@echo "... classify_onnx_cpp"
-	@echo "... main.o"
-	@echo "... main.i"
-	@echo "... main.s"
+	@echo "... ObjectClassification.o"
+	@echo "... ObjectClassification.i"
+	@echo "... ObjectClassification.s"
 .PHONY : help
 
 
@@ -190,6 +177,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	$(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/Classification/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

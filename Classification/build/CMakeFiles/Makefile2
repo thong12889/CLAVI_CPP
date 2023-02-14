@@ -64,29 +64,46 @@ CMAKE_BINARY_DIR = /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/Classification/build
 
 # The main recursive "all" target.
 all: CMakeFiles/classify_onnx_cpp.dir/all
+all: include/all
 .PHONY : all
 
 # The main recursive "preinstall" target.
-preinstall:
+preinstall: include/preinstall
 .PHONY : preinstall
 
 # The main recursive "clean" target.
 clean: CMakeFiles/classify_onnx_cpp.dir/clean
+clean: include/clean
 .PHONY : clean
+
+#=============================================================================
+# Directory level rules for directory include
+
+# Recursive "all" directory target.
+include/all: include/CMakeFiles/ObjCls.dir/all
+.PHONY : include/all
+
+# Recursive "preinstall" directory target.
+include/preinstall:
+.PHONY : include/preinstall
+
+# Recursive "clean" directory target.
+include/clean: include/CMakeFiles/ObjCls.dir/clean
+.PHONY : include/clean
 
 #=============================================================================
 # Target rules for target CMakeFiles/classify_onnx_cpp.dir
 
 # All Build rule for target.
-CMakeFiles/classify_onnx_cpp.dir/all:
+CMakeFiles/classify_onnx_cpp.dir/all: include/CMakeFiles/ObjCls.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/classify_onnx_cpp.dir/build.make CMakeFiles/classify_onnx_cpp.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/classify_onnx_cpp.dir/build.make CMakeFiles/classify_onnx_cpp.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/ryowa/ryowa/nreal/ai/CLAVI_CPP/Classification/build/CMakeFiles --progress-num=1,2 "Built target classify_onnx_cpp"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/ryowa/ryowa/nreal/ai/CLAVI_CPP/Classification/build/CMakeFiles --progress-num=3,4 "Built target classify_onnx_cpp"
 .PHONY : CMakeFiles/classify_onnx_cpp.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/classify_onnx_cpp.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/Classification/build/CMakeFiles 2
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/Classification/build/CMakeFiles 4
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/classify_onnx_cpp.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/Classification/build/CMakeFiles 0
 .PHONY : CMakeFiles/classify_onnx_cpp.dir/rule
@@ -99,6 +116,32 @@ classify_onnx_cpp: CMakeFiles/classify_onnx_cpp.dir/rule
 CMakeFiles/classify_onnx_cpp.dir/clean:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/classify_onnx_cpp.dir/build.make CMakeFiles/classify_onnx_cpp.dir/clean
 .PHONY : CMakeFiles/classify_onnx_cpp.dir/clean
+
+#=============================================================================
+# Target rules for target include/CMakeFiles/ObjCls.dir
+
+# All Build rule for target.
+include/CMakeFiles/ObjCls.dir/all:
+	$(MAKE) $(MAKESILENT) -f include/CMakeFiles/ObjCls.dir/build.make include/CMakeFiles/ObjCls.dir/depend
+	$(MAKE) $(MAKESILENT) -f include/CMakeFiles/ObjCls.dir/build.make include/CMakeFiles/ObjCls.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/ryowa/ryowa/nreal/ai/CLAVI_CPP/Classification/build/CMakeFiles --progress-num=1,2 "Built target ObjCls"
+.PHONY : include/CMakeFiles/ObjCls.dir/all
+
+# Build rule for subdir invocation for target.
+include/CMakeFiles/ObjCls.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/Classification/build/CMakeFiles 2
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 include/CMakeFiles/ObjCls.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/Classification/build/CMakeFiles 0
+.PHONY : include/CMakeFiles/ObjCls.dir/rule
+
+# Convenience name for target.
+ObjCls: include/CMakeFiles/ObjCls.dir/rule
+.PHONY : ObjCls
+
+# clean rule for target.
+include/CMakeFiles/ObjCls.dir/clean:
+	$(MAKE) $(MAKESILENT) -f include/CMakeFiles/ObjCls.dir/build.make include/CMakeFiles/ObjCls.dir/clean
+.PHONY : include/CMakeFiles/ObjCls.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

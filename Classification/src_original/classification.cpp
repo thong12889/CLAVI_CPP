@@ -254,6 +254,7 @@ int main(int argc, char* argv[])
 
 	std::vector<const char*> inputNames{inputName};
 	std::vector<const char*> outputNames{outputName0};
+
 	std::vector<Ort::Value> inputTensors;
 
 	size_t inputTensorSize = vectorProduct(inputDims);
