@@ -11,7 +11,7 @@
 
 #include <onnxruntime_cxx_api.h>
 
-CVQueue *q = new CVQueue(1);
+CVQueue *q = new CVQueue(10);
 cv::Mat img_resize;
 
 int const height = 1080;
@@ -30,42 +30,15 @@ void ThreadQueue(){
 	char input[] = "../utils/sdp/ffmpegextension.sdp";
 	cv::VideoCapture cap(input , cv::CAP_FFMPEG);
 	cv::Mat frame;
-
-	// while(1){
-	// 	cap >> frame;
-	// 	if(frame.empty()){
-	// 		std::cout << "Application closed due to empty frame" << std::endl;
-	// 	}
-	// 	else{
-	// 		q->Enqueue(frame);
-	// 		std::cout << "Enqueue" << std::endl;
-	// 	}
-	// }
-	// cv::VideoCapture cap(0); 
-	// cv::Mat frame;
       if(!cap.isOpened()){
              std::cout << "Error opening video stream or file" << std::endl;
       }
-
 	cap >> frame;
-	int frame_width=   frame.size().width;
-	int frame_height=   frame.size().height;
 
 	for(;;){
 		cap >> frame;
 		q->Enqueue(frame);
-		
-		
 	}
-
-	
-}
-
-cv::Mat *ImgResize(cv::Mat img){
-	h_resize = height/img.size().height;
-	w_resize = width/img.size().width;
-	cv::resize(img, img_resize , cv::Size() , h_resize, w_resize);
-	return &img_resize;
 }
 
 void ThreadDisplay(){
@@ -165,10 +138,10 @@ int main(int argc, char* argv[]){
 
 	std::string instanceName{"object-detection-inference"};
 	std::string modelFilepath = argv[1];
-	std::string imageFilepath = argv[2];
-	std::string labelFilepath = argv[3];
+	std::string labelFilepath = argv[2];
+	std::string imageFilepath = argv[3];
 
-	obj = new ObjectDetection(modelFilepath);
+	obj = new ObjectDetection(modelFilepath,labelFilepath);
 
 	if(!useCUDA){
 		//CPU

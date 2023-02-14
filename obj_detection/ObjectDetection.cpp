@@ -21,7 +21,6 @@
 ObjectDetection::ObjectDetection(std::string modelFilepath, std::string labelFilepath){
         this->modelFilepath = modelFilepath;
         this->classes_label_ = this->FindIndexClass(labelFilepath);
-        std::cout << (int)classes_label_[0][5] << std::endl;
         this->num_classes_ = classes_label_.size();
 }
 

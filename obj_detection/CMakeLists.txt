@@ -26,7 +26,8 @@ find_library(ONNX_RUNTIME_LIB onnxruntime HINTS /usr/local/lib)
 add_executable(${PROJECT_NAME} 
     ObjectDetection.cpp 
     ObjectDetection.h 
-    main.cpp
+    # main.cpp
+    ffmpeg_main.cpp
     GridAndStride.h 
     Object.h 
     CVQueue.h

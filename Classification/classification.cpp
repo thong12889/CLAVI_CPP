@@ -197,8 +197,8 @@ int main(int argc, char* argv[])
 
 	std::string instanceName{"object-detection-inference"};
 	std::string modelFilepath = argv[1];
-	std::string imageFilepath = argv[2];
-	std::string labelFilepath = argv[3];
+	std::string labelFilepath = argv[2];
+	std::string imageFilepath = argv[3];
 
 	Ort::Env env;
 	Ort::SessionOptions session_options;
