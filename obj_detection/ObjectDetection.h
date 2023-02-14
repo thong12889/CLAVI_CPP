@@ -60,7 +60,8 @@ class ObjectDetection{
 		const float bb_conf_thresh_ = 0.7;
 		const int input_w_ = 640;
 		const int input_h_ = 640;
-		std::vector<std::string> num_classes_;
+		std::vector<std::string> classes_label_;
+		int num_classes_;
 		Ort::Env env;
 		Ort::SessionOptions session_options;
 		Ort::AllocatorWithDefaultOptions allocator;

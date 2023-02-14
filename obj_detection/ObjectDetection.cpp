@@ -20,8 +20,9 @@
 
 ObjectDetection::ObjectDetection(std::string modelFilepath, std::string labelFilepath){
         this->modelFilepath = modelFilepath;
-        this->num_classes_ = this->FindIndexClass(labelFilepath);
-        std::cout << "Total Class : " << std::to_string(num_classes_.size()) << std::endl;
+        this->classes_label_ = this->FindIndexClass(labelFilepath);
+        std::cout << (int)classes_label_[0][5] << std::endl;
+        this->num_classes_ = classes_label_.size();
 }
 
 std::vector<std::string> ObjectDetection::FindIndexClass(std::string &path){
@@ -29,6 +30,12 @@ std::vector<std::string> ObjectDetection::FindIndexClass(std::string &path){
         std::ifstream input(path);
         for( std::string line; getline( input, line ); )
         {
+                //Fillter Unknown Character
+                for(int i =0 ; i<line.length(); i++){
+                        if((int)line[i] < 32){
+                                line.erase(i,1);
+                        }
+                }
                 path_temp.push_back(line);
         }
         return path_temp;
@@ -310,20 +317,7 @@ void ObjectDetection::DrawResult(cv::Mat& frame){
 	
 		// //Draw bounding box
 		cv::rectangle(frame, obj.rect_, cv::Scalar(0,0,255), 2);
-                cv::putText(frame, std::to_string(obj.label_), cv::Point(obj.rect_.x , obj.rect_.y) , cv::FONT_HERSHEY_SIMPLEX, 1,cv::Scalar(0,255,255) , true );
-	
-		// cv::Size label_size = cv::getTextSize(labels[obj.label_], cv::FONT_HERSHEY_SIMPLEX, 0.4, 1, 0);
-	
-		// cv::Scalar txt_bk_color = color * 0.7 * 255;
-	
-		// int x = obj.rect_.x;
-		// int y = obj.rect_.y + 1;
-		// if(y > frame.rows)
-		// 	y = frame.rows;
-		
-		// // //Draw label
-		// cv::rectangle(frame, cv::Rect(cv::Point(x,y), cv::Size(label_size.width, label_size.height + 0)), txt_bk_color, -1);
-		// cv::putText(frame, labels[obj.label_], cv::Point(x, y + label_size.height), cv::FONT_HERSHEY_SIMPLEX, 0.4, txt_color, 1);
+                cv::putText(frame, classes_label_[obj.label_], cv::Point(obj.rect_.x , obj.rect_.y) , cv::FONT_HERSHEY_SIMPLEX, 1,cv::Scalar(0,255,0) , true );
 	}
 
 }

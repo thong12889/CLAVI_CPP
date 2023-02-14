@@ -20,11 +20,11 @@ int h_resize , w_resize;
 cv::VideoWriter video;
 bool video_save = false;
 ObjectDetection *obj;
+cv::VideoCapture cap(0); 
 
 void ThreadQueue(){
-	cv::VideoCapture cap(0); 
 	cv::Mat frame;
-	while(1){
+	while(cap.isOpened()){
 		cap >> frame;
 		if(frame.empty()){
 			std::cout << "Application closed due to empty frame" << std::endl;
@@ -35,16 +35,7 @@ void ThreadQueue(){
 		}
 	}
 	
-	if(!cap.isOpened()){
-			std::cout << "Error opening video stream or file" << std::endl;
-	}
 
-	while(cap.isOpened()){
-		cap >> frame;
-		if(!frame.empty()){
-			q->Enqueue(frame);
-		}
-	}
 }
 
 cv::Mat *ImgResize(cv::Mat img){
@@ -102,6 +93,7 @@ void ThreadDisplay(){
 			}
 		}
 	}
+	cap.release();
 }
 
 int main(int argc, char* argv[]){
