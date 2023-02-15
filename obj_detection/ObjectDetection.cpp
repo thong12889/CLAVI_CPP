@@ -54,35 +54,37 @@ void ObjectDetection::InferenceInit(cv::Mat& frame_init){
         this->scale = std::min(this->input_w_ / (frame_init.cols * 1.0), this->input_h_ / (frame_init.rows * 1.0));
 }
 
-void ObjectDetection::RunInference(cv::Mat &preprocessedImage, clock_t &start , clock_t &end, std::vector<const char*> &inputNames){
-
-        
-        // inputTensorValues.clear();
+void ObjectDetection::RunInference(cv::Mat &preprocessedImage){
+        std::cout << "PASS1" << std::endl;
         this->inputTensorValues.assign(preprocessedImage.begin<float>(), preprocessedImage.end<float>());
-        
-        
-
         this->inputTensors.push_back(Ort::Value::CreateTensor<float>(memoryInfo, this->inputTensorValues.data(), this->inputTensorSize, this->inputDims.data(), this->inputDims.size()));
-        
-        start = clock();
-        this->outputTensorValues = (*session_ptr_).Run(Ort::RunOptions{nullptr}, inputNames.data(), this->inputTensors.data(), this->numInputNodes, this->outputNames.data(), this->numOutputNodes);
-        end = clock();
-        
-        
-        
-        
+        this->outputTensorValues = (*session_ptr_).Run(Ort::RunOptions{nullptr}, this->inputNames.data(), this->inputTensors.data(), this->numInputNodes, this->outputNames.data(), this->numOutputNodes);
+        std::cout << "PASS2" << std::endl;
         this->pred = this->outputTensorValues[0].GetTensorMutableData<float>();
         this->pred_dim = this->outputTensorValues[0].GetTensorTypeAndShapeInfo().GetShape();
         this->label = this->outputTensorValues[1].GetTensorMutableData<int64_t>();
         this->label_dim = this->outputTensorValues[1].GetTensorTypeAndShapeInfo().GetShape();
-        
-        
-        decode_outputs(this->pred, this->pred_dim, this->label, this->scale, this->img_w, this->img_h);
-        
-        
+        std::cout << "PASS3" << std::endl;
+        decode_outputs(this->pred, this->pred_dim, this->label, this->objects, this->scale, this->img_w, this->img_h);
+        std::cout << "PASS4" << std::endl;
 
 
+}
 
+
+template <typename T> std::ostream& operator<<(std::ostream& os, const std::vector<T>& v){
+
+	os << "[";
+        for(int i=0; i < v.size(); ++i)
+        {
+                os << v[i];
+                if(i != v.size() - 1)
+                {
+                        os << ", ";
+                }
+        }
+        os << "]";
+        return os;
 }
 
 
@@ -161,8 +163,8 @@ void ObjectDetection::nms_sorted_bboxes(const std::vector<Object>& object){
 
 }
 
-void ObjectDetection::get_candidates(const float* pred, std::vector<long> pred_dim, const int64_t* label){
-        this->objects.clear();
+void ObjectDetection::get_candidates(const float* pred, std::vector<long> pred_dim, const int64_t* label, std::vector<Object>& objects){
+        objects.clear();
 	for(int batch = 0; batch < pred_dim[0]; batch++)
         {
                 for(int cand = 0; cand < pred_dim[1]; cand++)
@@ -172,6 +174,7 @@ void ObjectDetection::get_candidates(const float* pred, std::vector<long> pred_d
                         int idx2 = idx1 + score;
                         if(pred[idx2] > this->bb_conf_thresh_)
                         {
+                                std::cout << "bb_thresh : " << std::to_string(this->bb_conf_thresh_) << std::endl;
                                 int label_idx = idx1 / 5;
                                 Object obj;
                                 obj.rect_.x = pred[idx1 + 0];
@@ -181,14 +184,14 @@ void ObjectDetection::get_candidates(const float* pred, std::vector<long> pred_d
                                 obj.label_ = label[label_idx];
                                 obj.prob_ = pred[idx2];
 
-                                this->objects.push_back(obj);
+                                objects.push_back(obj);
                         }
                 }
         }
 }
 
-void ObjectDetection::decode_outputs(const float* pred, std::vector<long> pred_dim, const int64_t* label, float scale, const int img_w, const int img_h){
-	get_candidates(pred, pred_dim, label);
+void ObjectDetection::decode_outputs(const float* pred, std::vector<long> pred_dim, const int64_t* label, std::vector<Object>& objects, float scale, const int img_w, const int img_h){
+	get_candidates(pred, pred_dim, label, objects);
 
         float dif_w = (float)img_w / (float)input_w_;
         float dif_h = (float)img_h / (float)input_h_;
@@ -211,6 +214,67 @@ void ObjectDetection::decode_outputs(const float* pred, std::vector<long> pred_d
         }
 }
 
+
+std::ostream& operator<<(std::ostream& os, const ONNXTensorElementDataType& type)
+{
+	switch(type)
+	{
+		case ONNXTensorElementDataType::ONNX_TENSOR_ELEMENT_DATA_TYPE_UNDEFINED:
+			os << "undefined";
+			break;
+		case ONNXTensorElementDataType::ONNX_TENSOR_ELEMENT_DATA_TYPE_FLOAT:
+			os << "float";
+			break;
+		case ONNXTensorElementDataType::ONNX_TENSOR_ELEMENT_DATA_TYPE_UINT8:
+			os << "uint8_t";
+			break;
+		case ONNXTensorElementDataType::ONNX_TENSOR_ELEMENT_DATA_TYPE_INT8:
+			os << "int8_t";
+			break;
+        	case ONNXTensorElementDataType::ONNX_TENSOR_ELEMENT_DATA_TYPE_UINT16:
+            		os << "uint16_t";
+           	 	break;
+        	case ONNXTensorElementDataType::ONNX_TENSOR_ELEMENT_DATA_TYPE_INT16:
+            		os << "int16_t";
+            		break;
+        	case ONNXTensorElementDataType::ONNX_TENSOR_ELEMENT_DATA_TYPE_INT32:
+            		os << "int32_t";
+            		break;
+        	case ONNXTensorElementDataType::ONNX_TENSOR_ELEMENT_DATA_TYPE_INT64:
+            		os << "int64_t";
+            		break;
+        	case ONNXTensorElementDataType::ONNX_TENSOR_ELEMENT_DATA_TYPE_STRING:
+            		os << "std::string";
+            		break;
+        	case ONNXTensorElementDataType::ONNX_TENSOR_ELEMENT_DATA_TYPE_BOOL:
+            		os << "bool";
+            		break;
+        	case ONNXTensorElementDataType::ONNX_TENSOR_ELEMENT_DATA_TYPE_FLOAT16:
+            		os << "float16";
+            		break;
+        	case ONNXTensorElementDataType::ONNX_TENSOR_ELEMENT_DATA_TYPE_DOUBLE:
+            		os << "double";
+            		break;
+        	case ONNXTensorElementDataType::ONNX_TENSOR_ELEMENT_DATA_TYPE_UINT32:
+            		os << "uint32_t";
+            		break;
+        	case ONNXTensorElementDataType::ONNX_TENSOR_ELEMENT_DATA_TYPE_UINT64:
+            		os << "uint64_t";
+            		break;
+        	case ONNXTensorElementDataType::ONNX_TENSOR_ELEMENT_DATA_TYPE_COMPLEX64:
+            		os << "float real + float imaginary";
+            		break;
+        	case ONNXTensorElementDataType::ONNX_TENSOR_ELEMENT_DATA_TYPE_COMPLEX128:
+            		os << "double real + float imaginary";
+            		break;
+        	case ONNXTensorElementDataType::ONNX_TENSOR_ELEMENT_DATA_TYPE_BFLOAT16:
+            		os << "bfloat16";
+            		break;
+        	default:
+            		break;
+	}
+	return os;
+}
 
 std::vector<std::string> ObjectDetection::readLabels(std::string& labelFilepath)
 {
@@ -257,14 +321,14 @@ void ObjectDetection::DrawResult(cv::Mat& frame){
 
 }
 
-Ort::Session ObjectDetection::SessionInit(std::vector<const char*> &inputNames){
+Ort::Session ObjectDetection::SessionInit(){
         
         Ort::Session session(env, this->modelFilepath.c_str(), session_options);
 
 
         //OOP
 
-        Ort::AllocatorWithDefaultOptions allocator;
+
         this->numInputNodes = session.GetInputCount();
 	this->numOutputNodes = session.GetOutputCount();
         this->inputName = session.GetInputName(0, allocator);
@@ -279,7 +343,7 @@ Ort::Session ObjectDetection::SessionInit(std::vector<const char*> &inputNames){
 	const char* outputName0 = session.GetOutputName(0, allocator);
 	const char* outputName1 = session.GetOutputName(1, allocator);
 
-        inputNames.push_back(inputName);
+        this->inputNames.push_back(inputName);
         this->outputNames.push_back(outputName0);
         this->outputNames.push_back(outputName1);
 

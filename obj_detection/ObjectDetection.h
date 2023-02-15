@@ -23,22 +23,18 @@
 #include <iterator>
 #include <memory>
 
-#include <fstream>
-
-
 
 
 
 class ObjectDetection{
 	public:
 		ObjectDetection(std::string, std::string);
-		~ObjectDetection();
 		std::vector<std::string> FindIndexClass(std::string&);
 		void UseCUDA();
 		void UseCPU();
-		Ort::Session SessionInit( std::vector<const char*> &inputNames);
+		Ort::Session SessionInit();
 		void InferenceInit(cv::Mat&);
-		void RunInference(cv::Mat&, clock_t &, clock_t&, std::vector<const char*> &);
+		void RunInference(cv::Mat&);
 		template <typename T> friend std::ostream& operator<<(std::ostream& , const std::vector<T>& );
 		void generate_grids_and_stride(const int target_w, const int target_h, std::vector<int>& strides, std::vector<GridAndStride>& grid_strides);
 		void generate_yolox_proposals(std::vector<GridAndStride> grid_strides, const float* feat_ptr, float prob_threshold, std::vector<Object>& objects);
@@ -46,8 +42,8 @@ class ObjectDetection{
 		void qsort_descent_inplace(std::vector<Object>& , int left, int right);
 		void qsort_descent_inplace(std::vector<Object>& );
 		void nms_sorted_bboxes(const std::vector<Object>& );
-		void get_candidates(const float* pred, std::vector<long> pred_dim, const int64_t* label );
-		void decode_outputs(const float* pred, std::vector<long> pred_dim, const int64_t* label, float scale, const int img_w, const int img_h);
+		void get_candidates(const float* pred, std::vector<long> pred_dim, const int64_t* label, std::vector<Object>& );
+		void decode_outputs(const float* pred, std::vector<long> pred_dim, const int64_t* label, std::vector<Object>& , float scale, const int img_w, const int img_h);
 		void draw_objects(const cv::Mat& bgr, const std::vector<Object>& );
 		friend std::ostream& operator<<(std::ostream& os, const ONNXTensorElementDataType& type);
 		std::vector<std::string> readLabels(std::string& labelFilepath);
@@ -68,14 +64,14 @@ class ObjectDetection{
 		int num_classes_;
 		Ort::Env env;
 		Ort::SessionOptions session_options;
-		
+		Ort::AllocatorWithDefaultOptions allocator;
 		const char* inputName;
 
 		Ort::Session *session_ptr_;
 		std::vector<Ort::Value> inputTensors;
 
 		std::vector<int64_t> inputDims;
-		// std::vector<const char*> inputNames;
+		std::vector<const char*> inputNames;
 		std::vector<const char*> outputNames;
 		size_t numInputNodes;
 		size_t numOutputNodes;
@@ -95,10 +91,6 @@ class ObjectDetection{
 		int img_h;
 		float scale;
 		std::vector<Object> objects;
-		
-		std::ofstream myfile;
-		clock_t start, end;
-        //Testing Performance 
 		
 
 
