@@ -10,7 +10,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/ryowa/ryowa/nreal/ai/CLAVI_CPP/obj_detection/CVQueue.cpp" "CMakeFiles/objDetection.dir/CVQueue.cpp.o" "gcc" "CMakeFiles/objDetection.dir/CVQueue.cpp.o.d"
   "/home/ryowa/ryowa/nreal/ai/CLAVI_CPP/obj_detection/ObjectDetection.cpp" "CMakeFiles/objDetection.dir/ObjectDetection.cpp.o" "gcc" "CMakeFiles/objDetection.dir/ObjectDetection.cpp.o.d"
-  "/home/ryowa/ryowa/nreal/ai/CLAVI_CPP/obj_detection/ffmpeg_main.cpp" "CMakeFiles/objDetection.dir/ffmpeg_main.cpp.o" "gcc" "CMakeFiles/objDetection.dir/ffmpeg_main.cpp.o.d"
+  "/home/ryowa/ryowa/nreal/ai/CLAVI_CPP/obj_detection/main.cpp" "CMakeFiles/objDetection.dir/main.cpp.o" "gcc" "CMakeFiles/objDetection.dir/main.cpp.o.d"
   )
 
 # Targets to which this target links.

@@ -3,8 +3,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/objDetection.dir/CVQueue.cpp.o.d"
   "CMakeFiles/objDetection.dir/ObjectDetection.cpp.o"
   "CMakeFiles/objDetection.dir/ObjectDetection.cpp.o.d"
-  "CMakeFiles/objDetection.dir/ffmpeg_main.cpp.o"
-  "CMakeFiles/objDetection.dir/ffmpeg_main.cpp.o.d"
+  "CMakeFiles/objDetection.dir/main.cpp.o"
+  "CMakeFiles/objDetection.dir/main.cpp.o.d"
   "objDetection"
   "objDetection.pdb"
 )

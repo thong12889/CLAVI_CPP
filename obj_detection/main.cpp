@@ -11,8 +11,15 @@
 
 #include <onnxruntime_cxx_api.h>
 
+#include <fstream>
+
 CVQueue *q = new CVQueue(10);
 cv::Mat img_resize;
+
+//Testing Performance 
+std::string imageFilepath;
+std::ofstream myfile;
+//Testing Performance 
 
 int const height = 1080;
 int const width = 1920;
@@ -47,8 +54,11 @@ cv::Mat *ImgResize(cv::Mat img){
 
 void ThreadDisplay(){
 	// cv::Mat *img;
+	myfile.open("performance_testing/obj_model.csv");
+	myfile << "Object Detection\n";
 	cv::Mat temp, show_img, resizedImage, preprocessedImage;
-	Ort::Session session = obj->SessionInit();
+	std::vector<const char*> inputNames;
+	Ort::Session session = obj->SessionInit(inputNames);
 
 	while(1){
 		
@@ -62,31 +72,45 @@ void ThreadDisplay(){
 		}
 	}
 	
-	
-	while(1){
-		if(!q->IsEmpty()){
+	cv::Mat imageBGR = cv::imread(imageFilepath, cv::ImreadModes::IMREAD_COLOR);
+	clock_t start, end;
+
+	for(int i =0; i <100 ; i++){
+		if(1){
 			// img = ImgResize(q->Dequeue());
-			temp = q->Dequeue().clone();
+			// temp = q->Dequeue().clone();
 
 			// if(!video_save){
 			// 	video_save = true;
 			// 	video = cv::VideoWriter("out.avi",cv::VideoWriter::fourcc('M','J','P','G'),30, cv::Size(1280,720),true);
 			// }
-			if(!temp.empty()){
-				cv::resize(temp, resizedImage, cv::Size(640, 640));
+			if(1){
+				cv::resize(imageBGR, resizedImage, cv::Size(640, 640));
 				cv::dnn::blobFromImage(resizedImage, preprocessedImage);
-				obj->RunInference(preprocessedImage);
-				obj->DrawResult(resizedImage);
 
-				std::cout << "Get Frame" << std::endl;
+				//##### Performance Testing ######
+				
+
+				obj->RunInference(preprocessedImage , start , end, inputNames);
+
+				
+				double time_taken = double(end- start) / double(CLOCKS_PER_SEC);
+				myfile << std::to_string(time_taken);
+				myfile << "\n";
+				//##### Performance Testing ######
+
+				
+				// obj->DrawResult(resizedImage);
+
+				// std::cout << "Get Frame" << std::endl;
 				// if(video_save){
 				// 	cv::resize(resizedImage, show_img , cv::Size(1280,720));
 				// 	video.write(show_img);
 				// }
-				cv::imshow("RTP" , resizedImage); 
-				if(cv::waitKey(1) == 'q'){
-					break;
-				}
+				// cv::imshow("RTP" , resizedImage); 
+				// if(cv::waitKey(1) == 'q'){
+				// 	break;
+				// }
 			}
 			else{
 				std::cout << "Empty Frame" << std::endl;
@@ -142,7 +166,7 @@ int main(int argc, char* argv[]){
 	std::string instanceName{"object-detection-inference"};
 	std::string modelFilepath = argv[1];
 	std::string labelFilepath = argv[2];
-	std::string imageFilepath = argv[3];
+	imageFilepath = argv[3];
 
 	obj = new ObjectDetection(modelFilepath, labelFilepath);
 

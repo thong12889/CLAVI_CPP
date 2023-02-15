@@ -8,7 +8,10 @@ find_path(ONNX_RUNTIME_SESSION_INCLUDE_DIRS onnxruntime_cxx_api.h HINTS /usr/loc
 
 find_library(ONNX_RUNTIME_LIB onnxruntime HINTS /usr/local/lib)
 
-add_executable(${PROJECT_NAME} main.cpp )
+add_executable(${PROJECT_NAME} 
+            main.cpp 
+            # src_original/classification.cpp
+            )
 target_include_directories(${PROJECT_NAME} 
     PRIVATE ${ONNX_RUNTIME_SESSION_INCLUDE_DIRS} 
     PUBLIC ${OpenCV_INCLUDE_DIRS} 

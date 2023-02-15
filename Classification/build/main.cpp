@@ -20,11 +20,16 @@
 #include <memory>
 #include <vector>
 
+#include <fstream>
+
 
 ObjectClassification *cls;
 
+//Write to CSV
+std::ofstream myfile;
 
-#define tcout  std::cout
+
+// #define tcout  std::cout
 #define file_name_t  std::string
 #define imread_t  cv::imread
 #define NMS_THRESH 0.5
@@ -92,6 +97,8 @@ std::vector<std::string> readLabels(std::string& labelFilepath)
 
 int main(int argc, char* argv[])
 {
+	myfile.open("performance_testing/cls_model.csv");
+	myfile << "Object Classification\n";
 	clock_t start, end;
 
 	if(argc < 5)
@@ -124,100 +131,59 @@ int main(int argc, char* argv[])
 
     cls = new ObjectClassification(modelFilepath, labelFilepath);
 
-	Ort::Env env;
-	Ort::SessionOptions session_options;
+
 
 	if(useCUDA)
 	{
         //Use CUDA
-        cls->UseCUDA(session_options);
+        cls->UseCUDA();
 	}
 	else
 	{
         //use CPU
-        cls->UseCPU(session_options);
+        cls->UseCPU();
 
 	}
 	
-	// Ort::Session session(env, modelFilepath.c_str(), session_options);
-	// Ort::AllocatorWithDefaultOptions allocator;
-
-	size_t numInputNodes;
-	size_t numOutputNodes;
-
-	const char* inputName;
 
 
-	ONNXTensorElementDataType inputType;
+    Ort::Session session = cls->SessionInit();
+	cv::Mat imageBGR = cv::imread(imageFilepath, cv::ImreadModes::IMREAD_COLOR);
 
-	
-	std::vector<int64_t> inputDims;
+	for(int n = 0; n < 100; n++){
 
-	const char* outputName0;
+		
 
-	std::vector<const char*> inputNames;
-	std::vector<const char*> outputNames;
-	std::vector<Ort::Value> inputTensors;
+		cv::Mat preprocessedImage, resizedImage;
 
-	size_t inputTensorSize ;
-	std::vector<float> inputTensorValues;
-	Ort::MemoryInfo memoryInfo = Ort::MemoryInfo::CreateCpu(OrtAllocatorType::OrtArenaAllocator, OrtMemType::OrtMemTypeDefault);
-
-    Ort::Session session = cls->SessionInit(env,
-                                session_options,
-                                numInputNodes,
-                                numOutputNodes,
-                                inputDims,
-                                inputNames,
-                                outputNames,
-                                inputTensors,
-                                inputTensorSize,
-                                inputTensorValues);
-
-
-	
-	std::vector<std::string> labels{readLabels(labelFilepath)};
-
-	for(int n = 0; n < 1; n++){
-
-		start = clock();
-
-		cv::Mat imageBGR = cv::imread(imageFilepath, cv::ImreadModes::IMREAD_COLOR);
-		cv::Mat preprocessedImage;
-
-		cv::Mat resizedImage;
 		cv::resize(imageBGR, resizedImage, cv::Size(224, 224));
 		cv::dnn::blobFromImage(resizedImage, preprocessedImage);
 
-		inputTensorValues.assign(preprocessedImage.begin<float>(), preprocessedImage.end<float>());
+		start = clock();
 
-		inputTensors.push_back(Ort::Value::CreateTensor<float>(memoryInfo, inputTensorValues.data(), inputTensorSize, inputDims.data(), inputDims.size()));
+		cls->Inference(preprocessedImage);
 
-		auto outputTensorValues = session.Run(Ort::RunOptions{nullptr}, inputNames.data(), inputTensors.data(), numInputNodes, outputNames.data(), numOutputNodes);
-		
-		//Read image file
-		cv::Mat image = imread_t(imageFilepath);
-		int img_w = image.cols;
-		int img_h = image.rows;
-		float scale = std::min(224 / (image.cols * 1.0), 224 / (image.rows * 1.0));
-		cv::Mat result_img;
-
-		const float* pred = outputTensorValues[0].GetTensorMutableData<float>();
-		std::vector<int64_t> pred_dim = outputTensorValues[0].GetTensorTypeAndShapeInfo().GetShape();
-
-		std::vector<float> pred_list;
-		for(int i = 0; i < 5; i++)
-		{
-			std::cout << pred[i] << std::endl;
-			pred_list.push_back(pred[i]);
-		}
-		std::vector<float>::iterator iter = std::max_element(pred_list.begin(), pred_list.end());
-		size_t index = std::distance(pred_list.begin(), iter);
-		std::cout << "Result: " << labels[index] << std::endl;
-		std::cout << "Score : " << pred[index]<< std::endl;
-
+		//#####Perfomance Testing######
 		end = clock();
 		double time_taken = double(end - start) / double(CLOCKS_PER_SEC);
+		myfile << std::to_string(time_taken);
+		myfile << "\n";
 		std::cout << "Processing time: " << time_taken << std::endl;
+		//#####Perfomance Testing######
+
+		cls->DrawResult(resizedImage);
+
+		cv::resize(resizedImage, resizedImage, cv::Size(500, 500));
+
+		cv::imshow("Test" , resizedImage);
+		if(cv::waitKey(30) == 'q'){
+			break;
+		}
+
+
+		
+
+		
 	}
+	myfile.close();
 }	

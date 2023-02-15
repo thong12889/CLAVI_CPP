@@ -777,7 +777,7 @@ CMakeFiles/objDetection.dir/ObjectDetection.cpp.o: /home/ryowa/ryowa/nreal/ai/CL
   /usr/include/c++/7/iterator \
   /usr/include/c++/7/bits/stream_iterator.h
 
-CMakeFiles/objDetection.dir/ffmpeg_main.cpp.o: /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/obj_detection/ffmpeg_main.cpp \
+CMakeFiles/objDetection.dir/main.cpp.o: /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/obj_detection/main.cpp \
   /usr/include/stdc-predef.h \
   /usr/include/c++/7/iostream \
   /usr/include/x86_64-linux-gnu/c++/7/bits/c++config.h \
@@ -1212,6 +1212,8 @@ CMakeFiles/objDetection.dir/ffmpeg_main.cpp.o: /home/ryowa/ryowa/nreal/ai/CLAVI_
 /usr/local/include/opencv4/opencv2/stitching/detail/util.hpp:
 
 /usr/local/include/opencv4/opencv2/stitching/detail/motion_estimators.hpp:
+
+/home/ryowa/ryowa/nreal/ai/CLAVI_CPP/obj_detection/main.cpp:
 
 /usr/local/include/opencv4/opencv2/stitching/detail/matchers.hpp:
 
@@ -1694,8 +1696,6 @@ CMakeFiles/objDetection.dir/ffmpeg_main.cpp.o: /home/ryowa/ryowa/nreal/ai/CLAVI_
 /usr/include/x86_64-linux-gnu/c++/7/bits/c++allocator.h:
 
 /usr/include/c++/7/limits:
-
-/home/ryowa/ryowa/nreal/ai/CLAVI_CPP/obj_detection/ffmpeg_main.cpp:
 
 /usr/local/include/opencv4/opencv2/flann/all_indices.h:
 

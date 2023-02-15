@@ -26,26 +26,33 @@ class ObjectClassification{
     public:
         ObjectClassification();
         ObjectClassification(std::string , std::string);
-        std::vector<std::string> FindIndexClass(std::string&);
-		void UseCUDA(Ort::SessionOptions &);
-		void UseCPU(Ort::SessionOptions &);
-		Ort::Session SessionInit(Ort::Env &env, 
-                        Ort::SessionOptions &session_options, 
-                        size_t &numInputNodes ,
-                        size_t &numOutputNodes,
-                        std::vector<int64_t> &inputDims,
-                        std::vector<const char*> &inputNames,
-                        std::vector<const char*> &outputNames,
-                        std::vector<Ort::Value> &inputTensors,
-                        size_t &inputTensorSize,
-                        std::vector<float> &inputTensorValues
-                        );
+        
+		void UseCUDA();
+		void UseCPU();
+		Ort::Session SessionInit();
+        void Inference(cv::Mat &preprocessedImage);
+        void DrawResult(cv::Mat &image);
 
         
     private:
+        std::vector<std::string> FindIndexClass(std::string&);
         std::string modelFilepath;
         std::vector<std::string> classes_label_;
         int num_classes_;
+        size_t index_result_;
+
         Ort::Session *session_ptr_;
+        Ort::Env env;
+        Ort::SessionOptions session_options;
+        size_t numInputNodes;
+        size_t numOutputNodes;
+        std::vector<int64_t> inputDims;
+        std::vector<const char*> inputNames;
+        std::vector<const char*> outputNames;
+        std::vector<Ort::Value> inputTensors;
+        size_t inputTensorSize;
+        std::vector<float> inputTensorValues;
+        Ort::MemoryInfo memoryInfo = Ort::MemoryInfo::CreateCpu(OrtAllocatorType::OrtArenaAllocator, OrtMemType::OrtMemTypeDefault);
+        
         
 };

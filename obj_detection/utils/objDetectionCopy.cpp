@@ -550,8 +550,8 @@ int main(int argc, char* argv[])
 
 	std::string instanceName{"object-detection-inference"};
 	std::string modelFilepath = argv[1];
-	std::string imageFilepath = argv[2];
-	std::string labelFilepath = argv[3];
+	std::string labelFilepath = argv[2];
+	imageFilepath = argv[3];
 
 	Ort::Env env;
 	Ort::SessionOptions session_options;
@@ -609,6 +609,11 @@ int main(int argc, char* argv[])
 	std::vector<const char*> outputNames{outputName0, outputName1};
 	std::vector<Ort::Value> inputTensors;
 
+	//Testing Performance 
+	std::string imageFilepath;
+	std::ofstream myfile;
+	//Testing Performance 
+
 	if(Camera)
 	{
 		cv::VideoCapture cap(0);
@@ -616,14 +621,16 @@ int main(int argc, char* argv[])
 			return -1;
 		}
 		
-		cv::Mat frame;
-		while(cap.read(frame)){
+		cv::Mat frame, resizedImage;
+		cv::Mat imageBGR = cv::imread(imageFilepath, cv::ImreadModes::IMREAD_COLOR);
+		for(int i = 0 ; i<100 ; i++){
 		
 			start = clock();
 		
 			cv::Mat preprocessedImage;
 		
-			cv::Mat resizedImage = static_resize(frame);
+			// cv::Mat resizedImage = static_resize(frame);
+			cv::resize(imageBGR , resizedImage, cv::Size(640,640));
 			cv::dnn::blobFromImage(resizedImage, preprocessedImage);
 		
 			size_t inputTensorSize = vectorProduct(inputDims);
@@ -633,6 +640,7 @@ int main(int argc, char* argv[])
 			Ort::MemoryInfo memoryInfo = Ort::MemoryInfo::CreateCpu(OrtAllocatorType::OrtArenaAllocator, OrtMemType::OrtMemTypeDefault);
 			inputTensors.push_back(Ort::Value::CreateTensor<float>(memoryInfo, inputTensorValues.data(), inputTensorSize, inputDims.data(), inputDims.size()));
 		
+
 			auto outputTensorValues = session.Run(Ort::RunOptions{nullptr}, inputNames.data(), inputTensors.data(), numInputNodes, outputNames.data(), numOutputNodes);
 		
 			//Read label file

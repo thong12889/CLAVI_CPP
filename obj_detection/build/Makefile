@@ -177,29 +177,29 @@ ObjectDetection.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/objDetection.dir/build.make CMakeFiles/objDetection.dir/ObjectDetection.cpp.s
 .PHONY : ObjectDetection.cpp.s
 
-ffmpeg_main.o: ffmpeg_main.cpp.o
-.PHONY : ffmpeg_main.o
+main.o: main.cpp.o
+.PHONY : main.o
 
 # target to build an object file
-ffmpeg_main.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/objDetection.dir/build.make CMakeFiles/objDetection.dir/ffmpeg_main.cpp.o
-.PHONY : ffmpeg_main.cpp.o
+main.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/objDetection.dir/build.make CMakeFiles/objDetection.dir/main.cpp.o
+.PHONY : main.cpp.o
 
-ffmpeg_main.i: ffmpeg_main.cpp.i
-.PHONY : ffmpeg_main.i
+main.i: main.cpp.i
+.PHONY : main.i
 
 # target to preprocess a source file
-ffmpeg_main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/objDetection.dir/build.make CMakeFiles/objDetection.dir/ffmpeg_main.cpp.i
-.PHONY : ffmpeg_main.cpp.i
+main.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/objDetection.dir/build.make CMakeFiles/objDetection.dir/main.cpp.i
+.PHONY : main.cpp.i
 
-ffmpeg_main.s: ffmpeg_main.cpp.s
-.PHONY : ffmpeg_main.s
+main.s: main.cpp.s
+.PHONY : main.s
 
 # target to generate assembly for a file
-ffmpeg_main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/objDetection.dir/build.make CMakeFiles/objDetection.dir/ffmpeg_main.cpp.s
-.PHONY : ffmpeg_main.cpp.s
+main.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/objDetection.dir/build.make CMakeFiles/objDetection.dir/main.cpp.s
+.PHONY : main.cpp.s
 
 # Help Target
 help:
@@ -216,9 +216,9 @@ help:
 	@echo "... ObjectDetection.o"
 	@echo "... ObjectDetection.i"
 	@echo "... ObjectDetection.s"
-	@echo "... ffmpeg_main.o"
-	@echo "... ffmpeg_main.i"
-	@echo "... ffmpeg_main.s"
+	@echo "... main.o"
+	@echo "... main.i"
+	@echo "... main.s"
 .PHONY : help
 
 

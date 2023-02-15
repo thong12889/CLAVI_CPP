@@ -83,24 +83,10 @@ CMakeFiles/objDetection.dir/ObjectDetection.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/objDetection.dir/ObjectDetection.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/obj_detection/ObjectDetection.cpp -o CMakeFiles/objDetection.dir/ObjectDetection.cpp.s
 
-CMakeFiles/objDetection.dir/ffmpeg_main.cpp.o: CMakeFiles/objDetection.dir/flags.make
-CMakeFiles/objDetection.dir/ffmpeg_main.cpp.o: /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/obj_detection/ffmpeg_main.cpp
-CMakeFiles/objDetection.dir/ffmpeg_main.cpp.o: CMakeFiles/objDetection.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ryowa/ryowa/nreal/ai/CLAVI_CPP/obj_detection/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/objDetection.dir/ffmpeg_main.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/objDetection.dir/ffmpeg_main.cpp.o -MF CMakeFiles/objDetection.dir/ffmpeg_main.cpp.o.d -o CMakeFiles/objDetection.dir/ffmpeg_main.cpp.o -c /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/obj_detection/ffmpeg_main.cpp
-
-CMakeFiles/objDetection.dir/ffmpeg_main.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/objDetection.dir/ffmpeg_main.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/obj_detection/ffmpeg_main.cpp > CMakeFiles/objDetection.dir/ffmpeg_main.cpp.i
-
-CMakeFiles/objDetection.dir/ffmpeg_main.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/objDetection.dir/ffmpeg_main.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/obj_detection/ffmpeg_main.cpp -o CMakeFiles/objDetection.dir/ffmpeg_main.cpp.s
-
 CMakeFiles/objDetection.dir/CVQueue.cpp.o: CMakeFiles/objDetection.dir/flags.make
 CMakeFiles/objDetection.dir/CVQueue.cpp.o: /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/obj_detection/CVQueue.cpp
 CMakeFiles/objDetection.dir/CVQueue.cpp.o: CMakeFiles/objDetection.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ryowa/ryowa/nreal/ai/CLAVI_CPP/obj_detection/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/objDetection.dir/CVQueue.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ryowa/ryowa/nreal/ai/CLAVI_CPP/obj_detection/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/objDetection.dir/CVQueue.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/objDetection.dir/CVQueue.cpp.o -MF CMakeFiles/objDetection.dir/CVQueue.cpp.o.d -o CMakeFiles/objDetection.dir/CVQueue.cpp.o -c /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/obj_detection/CVQueue.cpp
 
 CMakeFiles/objDetection.dir/CVQueue.cpp.i: cmake_force
@@ -111,18 +97,32 @@ CMakeFiles/objDetection.dir/CVQueue.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/objDetection.dir/CVQueue.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/obj_detection/CVQueue.cpp -o CMakeFiles/objDetection.dir/CVQueue.cpp.s
 
+CMakeFiles/objDetection.dir/main.cpp.o: CMakeFiles/objDetection.dir/flags.make
+CMakeFiles/objDetection.dir/main.cpp.o: /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/obj_detection/main.cpp
+CMakeFiles/objDetection.dir/main.cpp.o: CMakeFiles/objDetection.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ryowa/ryowa/nreal/ai/CLAVI_CPP/obj_detection/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/objDetection.dir/main.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/objDetection.dir/main.cpp.o -MF CMakeFiles/objDetection.dir/main.cpp.o.d -o CMakeFiles/objDetection.dir/main.cpp.o -c /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/obj_detection/main.cpp
+
+CMakeFiles/objDetection.dir/main.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/objDetection.dir/main.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/obj_detection/main.cpp > CMakeFiles/objDetection.dir/main.cpp.i
+
+CMakeFiles/objDetection.dir/main.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/objDetection.dir/main.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/obj_detection/main.cpp -o CMakeFiles/objDetection.dir/main.cpp.s
+
 # Object files for target objDetection
 objDetection_OBJECTS = \
 "CMakeFiles/objDetection.dir/ObjectDetection.cpp.o" \
-"CMakeFiles/objDetection.dir/ffmpeg_main.cpp.o" \
-"CMakeFiles/objDetection.dir/CVQueue.cpp.o"
+"CMakeFiles/objDetection.dir/CVQueue.cpp.o" \
+"CMakeFiles/objDetection.dir/main.cpp.o"
 
 # External object files for target objDetection
 objDetection_EXTERNAL_OBJECTS =
 
 objDetection: CMakeFiles/objDetection.dir/ObjectDetection.cpp.o
-objDetection: CMakeFiles/objDetection.dir/ffmpeg_main.cpp.o
 objDetection: CMakeFiles/objDetection.dir/CVQueue.cpp.o
+objDetection: CMakeFiles/objDetection.dir/main.cpp.o
 objDetection: CMakeFiles/objDetection.dir/build.make
 objDetection: /usr/local/lib/libonnxruntime.so
 objDetection: /usr/local/lib/libopencv_gapi.so.4.6.0
