@@ -28,6 +28,8 @@
 
 #include "CVQueue.h"
 
+#include <thread>
+
 
 #define tcout  std::cout
 #define file_name_t  std::string
@@ -38,6 +40,22 @@
 static const int INPUT_W = 640;
 static const int INPUT_H = 640;
 static const int NUM_CLASSES = 80;
+
+std::vector<int64_t> inputDims;
+std::vector<const char*> inputNames;
+std::vector<const char*> outputNames;
+std::vector<Ort::Value> inputTensors;
+size_t numInputNodes;
+size_t numOutputNodes;
+Ort::Session * session_ptr;
+std::string modelFilepath;
+std::string labelFilepath;
+std::string imageFilepath;
+
+//Testing Performance 
+std::ofstream myfile;
+clock_t start, end;
+//Testing Performance 
 
 template <typename T>
 T vectorProduct(const std::vector<T>& v)
@@ -501,9 +519,76 @@ std::vector<std::string> readLabels(std::string& labelFilepath)
 	return labels;
 }
 
+void inference_thread(){
+	cv::Mat imageBGR = cv::imread(imageFilepath, cv::ImreadModes::IMREAD_COLOR);
+
+	cv::Mat preprocessedImage, resizedImage;
+	std::vector<std::string> labels{readLabels(labelFilepath)};
+	if(true)
+	{
+		Ort::MemoryInfo memoryInfo = Ort::MemoryInfo::CreateCpu(OrtAllocatorType::OrtArenaAllocator, OrtMemType::OrtMemTypeDefault);
+
+		for(int i = 0; i < 1000; i++)
+		{
+			
+			// cv::Mat resizedImage = static_resize(imageBGR);
+			cv::resize(imageBGR, resizedImage , cv::Size(640,640));
+			cv::dnn::blobFromImage(resizedImage, preprocessedImage);
+
+			
+		
+			size_t inputTensorSize = vectorProduct(inputDims);
+			std::vector<float> inputTensorValues(inputTensorSize);
+
+			start = clock();
+			inputTensorValues.assign(preprocessedImage.begin<float>(), preprocessedImage.end<float>());
+			
+
+			inputTensors.push_back(Ort::Value::CreateTensor<float>(memoryInfo, inputTensorValues.data(), inputTensorSize, inputDims.data(), inputDims.size()));
+			
+			auto outputTensorValues = (*session_ptr).Run(Ort::RunOptions{nullptr}, inputNames.data(), inputTensors.data(), numInputNodes, outputNames.data(), numOutputNodes);
+
+			
+			
+			
+			//Read image file
+			// cv::Mat image = imread_t(imageFilepath);
+			int img_w = imageBGR.cols;
+			int img_h = imageBGR.rows;
+			float scale = std::min(INPUT_W / (imageBGR.cols * 1.0), INPUT_H / (imageBGR.rows * 1.0));
+			std::vector<Object> objects;
+
+			const float* pred = outputTensorValues[0].GetTensorMutableData<float>();
+			std::vector<long> pred_dim = outputTensorValues[0].GetTensorTypeAndShapeInfo().GetShape();
+			const int64_t* label = outputTensorValues[1].GetTensorMutableData<int64_t>();
+			std::vector<long> label_dim = outputTensorValues[1].GetTensorTypeAndShapeInfo().GetShape();
+			
+			
+
+			//Get results
+			decode_outputs(pred, pred_dim, label, objects, scale, img_w, img_h);
+
+			end = clock();
+			myfile << std::to_string(double(end- start) / double(CLOCKS_PER_SEC));
+			myfile << "\n";
+			//Read label file
+			
+			
+
+			//cv::imwrite("tech_result.jpg", image);
+		}	
+	}
+
+	//ReleaseCUDAProviderOptions(cuda_options);
+	cv::destroyAllWindows();
+}
+
 int main(int argc, char* argv[])
 {
-	clock_t start, end;
+	
+	myfile.open("performance_testing/obj_model.csv");
+	myfile << "Object Detection\n";
+	
 
 	if(argc < 4)
 	{
@@ -513,30 +598,30 @@ int main(int argc, char* argv[])
 	}
 
 	bool Camera{true};
-	bool Onetime{false};
-	bool useCUDA{false};
+	bool Onetime{true};
+	bool useCUDA{true};
 	const char* useCUDAFlag = "--use_cuda";
 	const char* useCPUFlag = "--use_cpu";
-	if(argc == 4)
-	{
-		useCUDA = false;
-	}
-	else if ((argc == 5) && (strcmp(argv[1], useCUDAFlag) == 0))
-	{
-		useCUDA = true;
-	}
-	else if ((argc == 5) && (strcmp(argv[1], useCPUFlag) == 0))
-	{
-		useCUDA = false;
-	}
-	else if ((argc == 5) && (strcmp(argv[1], useCUDAFlag) != 0))
-	{
-		useCUDA = false;
-	}
-	else
-	{
-		throw std::runtime_error("Too many arguments.");
-	}
+	// if(argc == 4)
+	// {
+	// 	useCUDA = false;
+	// }
+	// else if ((argc == 5) && (strcmp(argv[1], useCUDAFlag) == 0))
+	// {
+	// 	useCUDA = true;
+	// }
+	// else if ((argc == 5) && (strcmp(argv[1], useCPUFlag) == 0))
+	// {
+	// 	useCUDA = false;
+	// }
+	// else if ((argc == 5) && (strcmp(argv[1], useCUDAFlag) != 0))
+	// {
+	// 	useCUDA = false;
+	// }
+	// else
+	// {
+	// 	throw std::runtime_error("Too many arguments.");
+	// }
 
 	useCUDA = true;
 	if(useCUDA)
@@ -549,26 +634,14 @@ int main(int argc, char* argv[])
 	}
 
 	std::string instanceName{"object-detection-inference"};
-	std::string modelFilepath = argv[1];
-	std::string labelFilepath = argv[2];
+	modelFilepath = argv[1];
+	labelFilepath = argv[2];
 	imageFilepath = argv[3];
 
 	Ort::Env env;
 	Ort::SessionOptions session_options;
 	Ort::AllocatorWithDefaultOptions allocator;
 	if(!useCUDA){
-		//Ort::Env env(OrtLoggingLevel::ORT_LOGGING_LEVEL_WARNING, instanceName.c_str());
-		//Ort::Env env;
-		//Ort::SessionOptions session_options;
-		session_options.SetIntraOpNumThreads(1);
-		session_options.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_EXTENDED);
-		//Ort::Session session(env, modelFilepath.c_str(), sessionOptions);
-		//Ort::AllocatorWithDefaultOptions allocator;
-	}
-	else{
-		//CUDA
-		//Ort::Env env;
-		//Ort::SessionOptions session_options;
 		OrtCUDAProviderOptions cuda_options;
 		cuda_options.device_id = 0;
 		cuda_options.cudnn_conv_algo_search = OrtCudnnConvAlgoSearch();
@@ -577,21 +650,24 @@ int main(int argc, char* argv[])
 		cuda_options.do_copy_in_default_stream = 1;
 		session_options.AppendExecutionProvider_CUDA(cuda_options);
 		session_options.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);
-		//session(env, modelFilepath.c_str(), session_options);
-		//Ort::AllocatorWithDefaultOptions allocator;
-		
-		//OrtCUDAProviderOptionsV2* cuda_options = nullptr;
-		//CreateCUDAProviderOptions(&cuda_options);
-		//std::vector<const char*> keys{"device_id", "gpu_mem_limit", "arena_extend_strategy", "cudnn_conv_algo_search", "do_copy_in_default_stream", "cudnn_conv_use_max_workspace", "cudnn_conv1d_pad_to_nc1d"};
-		//std::vector<const char*> values{"0", "2147483648", "kSameAsRequested", "DEFAULT", "1", "1", "1"};
-		//UpdateCUDAProviderOptions(cuda_options, keys.data(), values.data(), keys.size());
-		//SessionOptionsAppendExecutionProvider_CUDA_V2(session_options, cuda_options);
+	}
+	else{
+		//CUDA
+		OrtCUDAProviderOptions cuda_options;
+		cuda_options.device_id = 0;
+		cuda_options.cudnn_conv_algo_search = OrtCudnnConvAlgoSearch();
+		cuda_options.cuda_mem_limit = static_cast<int>(SIZE_MAX * 1024 * 1024);
+		cuda_options.arena_extend_strategy = 1;
+		cuda_options.do_copy_in_default_stream = 1;
+		session_options.AppendExecutionProvider_CUDA(cuda_options);
+		session_options.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);
+
 	}
 
 	Ort::Session session(env, modelFilepath.c_str(), session_options);
 
-	size_t numInputNodes = session.GetInputCount();
-	size_t numOutputNodes = session.GetOutputCount();
+	numInputNodes = session.GetInputCount();
+	numOutputNodes = session.GetOutputCount();
 
 	const char* inputName = session.GetInputName(0, allocator);
 
@@ -600,195 +676,20 @@ int main(int argc, char* argv[])
 
 	ONNXTensorElementDataType inputType = inputTensorInfo.GetElementType();
 
-	std::vector<int64_t> inputDims = inputTensorInfo.GetShape();
+	inputDims = inputTensorInfo.GetShape();
 
 	const char* outputName0 = session.GetOutputName(0, allocator);
 	const char* outputName1 = session.GetOutputName(1, allocator);
 
-	std::vector<const char*> inputNames{inputName};
-	std::vector<const char*> outputNames{outputName0, outputName1};
-	std::vector<Ort::Value> inputTensors;
+	inputNames.push_back(inputName);
+	outputNames.push_back(outputName0);
+	outputNames.push_back(outputName1);
 
-	//Testing Performance 
-	std::string imageFilepath;
-	std::ofstream myfile;
-	//Testing Performance 
+	session_ptr = &session;
 
-	if(Camera)
-	{
-		cv::VideoCapture cap(0);
-		if(!cap.isOpened()){
-			return -1;
-		}
-		
-		cv::Mat frame, resizedImage;
-		cv::Mat imageBGR = cv::imread(imageFilepath, cv::ImreadModes::IMREAD_COLOR);
-		for(int i = 0 ; i<100 ; i++){
-		
-			start = clock();
-		
-			cv::Mat preprocessedImage;
-		
-			// cv::Mat resizedImage = static_resize(frame);
-			cv::resize(imageBGR , resizedImage, cv::Size(640,640));
-			cv::dnn::blobFromImage(resizedImage, preprocessedImage);
-		
-			size_t inputTensorSize = vectorProduct(inputDims);
-			std::vector<float> inputTensorValues(inputTensorSize);
-			inputTensorValues.assign(preprocessedImage.begin<float>(), preprocessedImage.end<float>());
-		
-			Ort::MemoryInfo memoryInfo = Ort::MemoryInfo::CreateCpu(OrtAllocatorType::OrtArenaAllocator, OrtMemType::OrtMemTypeDefault);
-			inputTensors.push_back(Ort::Value::CreateTensor<float>(memoryInfo, inputTensorValues.data(), inputTensorSize, inputDims.data(), inputDims.size()));
-		
+	std::thread display_thread(inference_thread);
+	display_thread.join();
 
-			auto outputTensorValues = session.Run(Ort::RunOptions{nullptr}, inputNames.data(), inputTensors.data(), numInputNodes, outputNames.data(), numOutputNodes);
-		
-			//Read label file
-			std::vector<std::string> labels{readLabels(labelFilepath)};
-			
-			//Read image file
-			cv::Mat image = frame;
-			int img_w = image.cols;
-			int img_h = image.rows;
-			float scale = std::min(INPUT_W / (image.cols * 1.0), INPUT_H / (image.rows * 1.0));
-			std::vector<Object> objects;
-			
-			const float* pred = outputTensorValues[0].GetTensorMutableData<float>();
-			std::vector<long> pred_dim = outputTensorValues[0].GetTensorTypeAndShapeInfo().GetShape();
-			const int64_t* label = outputTensorValues[1].GetTensorMutableData<int64_t>();
-			std::vector<long> label_dim = outputTensorValues[1].GetTensorTypeAndShapeInfo().GetShape();
-			
-			//Get results
-			decode_outputs(pred, pred_dim, label, objects, scale, img_w, img_h);
-			
-			//Draw results
-			for(int i = 0; i < objects.size(); i++)
-			{
-				const Object& obj = objects[i];
-			
-				cv::Scalar color = cv::Scalar(color_list[obj.label][0], color_list[obj.label][1], color_list[obj.label][2]);
-				float c_mean = cv::mean(color)[0];
-				cv::Scalar txt_color;
-				if(c_mean > 0.5){
-					txt_color = cv::Scalar(0,0,0);
-				}
-				else{
-					txt_color = cv::Scalar(255,255,255);
-				}
-			
-				//Draw bounding box
-				cv::rectangle(image, obj.rect, cv::Scalar(0,0,255), 2);
-			
-				int baseLine = 0;
-				cv::Size label_size = cv::getTextSize(labels[obj.label], cv::FONT_HERSHEY_SIMPLEX, 0.4, 1, &baseLine);
-			
-				cv::Scalar txt_bk_color = color * 0.7 * 255;
-			
-				int x = obj.rect.x;
-				int y = obj.rect.y + 1;
-				if(y > image.rows)
-					y = image.rows;
-				
-				//Draw label
-				cv::rectangle(image, cv::Rect(cv::Point(x,y), cv::Size(label_size.width, label_size.height + baseLine)), txt_bk_color, -1);
-				cv::putText(image, labels[obj.label], cv::Point(x, y + label_size.height), cv::FONT_HERSHEY_SIMPLEX, 0.4, txt_color, 1);
-			}
-			
-			end = clock();
-			double time_taken = double(end - start) / double(CLOCKS_PER_SEC);
-			std::cout << time_taken << std::endl;
-			
-			//cv::imwrite("_demo.jpg", image);
-			
-		
-			cv::imshow("result", image);
-			const int key = cv::waitKey(100);
-			if(key == 'q'){
-				break;
-			}
-		}
-	}
-	if(Onetime)
-	{
-		for(int i = 0; i < 100; i++)
-		{
-			start = clock();
-		
-			cv::Mat imageBGR = cv::imread(imageFilepath, cv::ImreadModes::IMREAD_COLOR);
-			cv::Mat preprocessedImage;
-		
-			cv::Mat resizedImage = static_resize(imageBGR);
-			cv::dnn::blobFromImage(resizedImage, preprocessedImage);
-		
-			size_t inputTensorSize = vectorProduct(inputDims);
-			std::vector<float> inputTensorValues(inputTensorSize);
-			inputTensorValues.assign(preprocessedImage.begin<float>(), preprocessedImage.end<float>());
-		
-			Ort::MemoryInfo memoryInfo = Ort::MemoryInfo::CreateCpu(OrtAllocatorType::OrtArenaAllocator, OrtMemType::OrtMemTypeDefault);
-			inputTensors.push_back(Ort::Value::CreateTensor<float>(memoryInfo, inputTensorValues.data(), inputTensorSize, inputDims.data(), inputDims.size()));
-		
-			auto outputTensorValues = session.Run(Ort::RunOptions{nullptr}, inputNames.data(), inputTensors.data(), numInputNodes, outputNames.data(), numOutputNodes);
-		
-			//Read label file
-			std::vector<std::string> labels{readLabels(labelFilepath)};
-			
-			//Read image file
-			cv::Mat image = imread_t(imageFilepath);
-			int img_w = image.cols;
-			int img_h = image.rows;
-			float scale = std::min(INPUT_W / (image.cols * 1.0), INPUT_H / (image.rows * 1.0));
-			std::vector<Object> objects;
-
-			const float* pred = outputTensorValues[0].GetTensorMutableData<float>();
-			std::vector<long> pred_dim = outputTensorValues[0].GetTensorTypeAndShapeInfo().GetShape();
-			const int64_t* label = outputTensorValues[1].GetTensorMutableData<int64_t>();
-			std::vector<long> label_dim = outputTensorValues[1].GetTensorTypeAndShapeInfo().GetShape();
-			
-			//Get results
-			decode_outputs(pred, pred_dim, label, objects, scale, img_w, img_h);
-			
-			//Draw results
-		//	for(int i = 0; i < objects.size(); i++)
-		//	{
-		//		const Object& obj = objects[i];
-		//	
-		//		cv::Scalar color = cv::Scalar(color_list[obj.label][0], color_list[obj.label][1], color_list[obj.label][2]);
-		//		float c_mean = cv::mean(color)[0];
-		//		cv::Scalar txt_color;
-		//		if(c_mean > 0.5){
-		//			txt_color = cv::Scalar(0,0,0);
-		//		}
-		//		else{
-		//			txt_color = cv::Scalar(255,255,255);
-		//		}
-		//	
-		//		//Draw bounding box
-		//		cv::rectangle(image, obj.rect, cv::Scalar(0,0,255), 2);
-		//	
-		//		int baseLine = 0;
-		//		cv::Size label_size = cv::getTextSize(labels[obj.label], cv::FONT_HERSHEY_SIMPLEX, 0.4, 1, &baseLine);
-		//	
-		//		cv::Scalar txt_bk_color = color * 0.7 * 255;
-		//	
-		//		int x = obj.rect.x;
-		//		int y = obj.rect.y + 1;
-		//		if(y > image.rows)
-		//			y = image.rows;
-		//		
-		//		//Draw label
-		//		cv::rectangle(image, cv::Rect(cv::Point(x,y), cv::Size(label_size.width, label_size.height + baseLine)), txt_bk_color, -1);
-		//		cv::putText(image, labels[obj.label], cv::Point(x, y + label_size.height), cv::FONT_HERSHEY_SIMPLEX, 0.4, txt_color, 1);
-		//	}
-			
-			end = clock();
-			double time_taken = double(end - start) / double(CLOCKS_PER_SEC);
-			std::cout << time_taken << std::endl;
-
-			//cv::imwrite("tech_result.jpg", image);
-		}	
-	}
-
-	//ReleaseCUDAProviderOptions(cuda_options);
-	cv::destroyAllWindows();
+	
 	return 0;
 }	
