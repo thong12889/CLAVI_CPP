@@ -55,18 +55,18 @@ void ObjectDetection::InferenceInit(cv::Mat& frame_init){
 }
 
 void ObjectDetection::RunInference(cv::Mat &preprocessedImage){
-        std::cout << "PASS1" << std::endl;
+
         this->inputTensorValues.assign(preprocessedImage.begin<float>(), preprocessedImage.end<float>());
         this->inputTensors.push_back(Ort::Value::CreateTensor<float>(memoryInfo, this->inputTensorValues.data(), this->inputTensorSize, this->inputDims.data(), this->inputDims.size()));
         this->outputTensorValues = (*session_ptr_).Run(Ort::RunOptions{nullptr}, this->inputNames.data(), this->inputTensors.data(), this->numInputNodes, this->outputNames.data(), this->numOutputNodes);
-        std::cout << "PASS2" << std::endl;
+
         this->pred = this->outputTensorValues[0].GetTensorMutableData<float>();
         this->pred_dim = this->outputTensorValues[0].GetTensorTypeAndShapeInfo().GetShape();
         this->label = this->outputTensorValues[1].GetTensorMutableData<int64_t>();
         this->label_dim = this->outputTensorValues[1].GetTensorTypeAndShapeInfo().GetShape();
-        std::cout << "PASS3" << std::endl;
+
         decode_outputs(this->pred, this->pred_dim, this->label, this->objects, this->scale, this->img_w, this->img_h);
-        std::cout << "PASS4" << std::endl;
+
 
 
 }
