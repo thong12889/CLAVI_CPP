@@ -53,24 +53,18 @@ void ThreadDisplay(){
 	while(1){
 		
 		if(!q->IsEmpty()){
-			temp = q->Dequeue().clone();
+			q->Dequeue().copyTo(temp);
 			cv::resize(temp, resizedImage, cv::Size(640, 640));
 			obj->InferenceInit(resizedImage);
 			std::cout << "Init Inference" << std::endl;
-			
 			break;
 		}
 	}
 	
+	
 	while(1){
 		if(!q->IsEmpty()){
-			// img = ImgResize(q->Dequeue());
-			temp = q->Dequeue().clone();
-
-			// if(!video_save){
-			// 	video_save = true;
-			// 	video = cv::VideoWriter("out.avi",cv::VideoWriter::fourcc('M','J','P','G'),30, cv::Size(1280,720),true);
-			// }
+			q->Dequeue().copyTo(temp);
 			if(!temp.empty()){
 				cv::resize(temp, resizedImage, cv::Size(640, 640));
 				cv::dnn::blobFromImage(resizedImage, preprocessedImage);
@@ -78,10 +72,6 @@ void ThreadDisplay(){
 				obj->DrawResult(resizedImage);
 
 				std::cout << "Get Frame" << std::endl;
-				// if(video_save){
-				// 	cv::resize(resizedImage, show_img , cv::Size(1280,720));
-				// 	video.write(show_img);
-				// }
 				cv::imshow("RTP" , resizedImage); 
 				if(cv::waitKey(1) == 'q'){
 					break;
@@ -155,11 +145,25 @@ int main(int argc, char* argv[]){
 		std::cout << "Use CUDA" << std::endl;
 	}
 
-	
+	//Thread Affinity
+	//Create CPU Set for ThreadQueue and  ThreadDisplay
+	cpu_set_t cpu_set_1;
+	cpu_set_t cpu_set_2;
 
+	//Zero Them out
+	CPU_ZERO(&cpu_set_1);
+	CPU_ZERO(&cpu_set_2);
+
+	//Set CPU Cores we want to pin thread too
+	CPU_SET(0,&cpu_set_1);
+	CPU_SET(1,&cpu_set_2);
 
 	std::thread queue_thread(ThreadQueue);
+	//Pin ThreadQueue to CPU Core 0
+	assert(pthread_setaffinity_np(queue_thread.native_handle(), sizeof(cpu_set_t), &cpu_set_1) == 0);
 	std::thread display_thread(ThreadDisplay);
+	//Pin ThreadDisplay to CPU Core 1
+	assert(pthread_setaffinity_np(display_thread.native_handle(), sizeof(cpu_set_t), &cpu_set_2) == 0);
 	queue_thread.join();
 	display_thread.join();
 }
