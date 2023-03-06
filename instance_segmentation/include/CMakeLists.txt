@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.13)
 project(instance_lib)
 
+
+add_subdirectory(plot)
+
 add_library(${PROJECT_NAME} InstanceSegmentation.cpp InstanceSegmentation.h )
 
 #Find LIB via pkg-config

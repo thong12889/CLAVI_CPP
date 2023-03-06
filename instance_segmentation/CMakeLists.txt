@@ -28,4 +28,5 @@ target_link_libraries(${PROJECT_NAME}
     PUBLIC ${OpenCV_LIBRARIES} 
     #PUBLIC ${QUEUE_LINK}
     PUBLIC instance_lib 
+    PUBLIC CVPLOT
     )

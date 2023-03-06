@@ -70,8 +70,12 @@ Ort::Session InstanceSegmentation::SessionInit()
                         inputDims = getInputDims;
                         }
                         const char* outputName0 = session.GetOutputName(0, allocator);
+                        const char* outputName1 = session.GetOutputName(1 , allocator);
+                        const char* outputName2 = session.GetOutputName(2 , allocator);
                         this->inputNames.push_back(inputName);
                         this->outputNames.push_back(outputName0);
+                        this->outputNames.push_back(outputName1);
+                        this->outputNames.push_back(outputName2);
                         this->inputTensorSize = vectorProduct(this->inputDims);
                         this->inputTensorValues.push_back(this->inputTensorSize);
                         this->session_ptr_ = &session;
@@ -81,13 +85,13 @@ void InstanceSegmentation::Inference(cv::Mat &preprocessedImage)
 {
         this->inputTensorValues.assign(preprocessedImage.begin<float>(), preprocessedImage.end<float>());
         this->inputTensors.push_back(Ort::Value::CreateTensor<float>(this->memoryInfo, this->inputTensorValues.data(), this->inputTensorSize, this->inputDims.data(), this->inputDims.size()));
+        std::cout << this->outputNames[0] << std::endl;
         std::vector<Ort::Value> outputTensorValues = (*this->session_ptr_).Run(Ort::RunOptions{nullptr}, this->inputNames.data(), this->inputTensors.data(), this->numInputNodes, this->outputNames.data(), this->numOutputNodes);
+        std::cout << this->outputNames.size() << std::endl;
         const float* pred = outputTensorValues[0].GetTensorMutableData<float>();
         std::vector<int64_t> pred_dim = outputTensorValues[0].GetTensorTypeAndShapeInfo().GetShape();
         std::vector<float> pred_list;
 
-        //pred_dim[0] = batch
-        //pred_dim[1] = size of class        
         for(int i = 0; i < pred_dim[1]; i++)
         {
                 pred_list.push_back(pred[i]);
