@@ -1,3 +1,12 @@
-/home/ryowa/ryowa/nreal/ai/CLAVI_CPP/obj_detection/build/CMakeFiles/objDetection.dir
-/home/ryowa/ryowa/nreal/ai/CLAVI_CPP/obj_detection/build/CMakeFiles/edit_cache.dir
-/home/ryowa/ryowa/nreal/ai/CLAVI_CPP/obj_detection/build/CMakeFiles/rebuild_cache.dir
+/home/ryowa-peace/ryowa/ai/CLAVI_CPP/obj_detection/build/CMakeFiles/objDetection.dir
+/home/ryowa-peace/ryowa/ai/CLAVI_CPP/obj_detection/build/CMakeFiles/edit_cache.dir
+/home/ryowa-peace/ryowa/ai/CLAVI_CPP/obj_detection/build/CMakeFiles/rebuild_cache.dir
+/home/ryowa-peace/ryowa/ai/CLAVI_CPP/obj_detection/build/include/CMakeFiles/ObjectDet.dir
+/home/ryowa-peace/ryowa/ai/CLAVI_CPP/obj_detection/build/include/CMakeFiles/edit_cache.dir
+/home/ryowa-peace/ryowa/ai/CLAVI_CPP/obj_detection/build/include/CMakeFiles/rebuild_cache.dir
+/home/ryowa-peace/ryowa/ai/CLAVI_CPP/obj_detection/build/include/queue/CMakeFiles/QUEUELIB.dir
+/home/ryowa-peace/ryowa/ai/CLAVI_CPP/obj_detection/build/include/queue/CMakeFiles/edit_cache.dir
+/home/ryowa-peace/ryowa/ai/CLAVI_CPP/obj_detection/build/include/queue/CMakeFiles/rebuild_cache.dir
+/home/ryowa-peace/ryowa/ai/CLAVI_CPP/obj_detection/build/include/plot/CMakeFiles/CVPLOT.dir
+/home/ryowa-peace/ryowa/ai/CLAVI_CPP/obj_detection/build/include/plot/CMakeFiles/edit_cache.dir
+/home/ryowa-peace/ryowa/ai/CLAVI_CPP/obj_detection/build/include/plot/CMakeFiles/rebuild_cache.dir

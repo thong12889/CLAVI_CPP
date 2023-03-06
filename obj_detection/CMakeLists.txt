@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.13.4)
 project(objDetection VERSION 1.0)
 
+
+add_subdirectory(include)
+
 set(CMAKE_GXX_FLAGS "-Wall -Wextra -Wconversion  -pedantic -std=gnu+20 -std=c++20" )
 
 set(CMAKE_THREAD_LIBS_INIT "-lpthread")
@@ -24,13 +27,6 @@ find_library(ONNX_RUNTIME_LIB onnxruntime HINTS /usr/local/lib)
 
 
 add_executable(${PROJECT_NAME} 
-    ObjectDetection.cpp 
-    ObjectDetection.h 
-    GridAndStride.h 
-    Object.h 
-    CVQueue.h
-    CVQueue.cpp
-
     main.cpp
     # objDetectionCopy.cpp
     # ffmpeg_main.cpp
@@ -40,8 +36,14 @@ target_include_directories(${PROJECT_NAME}
     PRIVATE ${OpenCV_INCLUDE_DIRS}
     PRIVATE ${GST_INCLUDE_DIRS}
     )
+
+
+
 target_link_libraries(${PROJECT_NAME} 
     PRIVATE ${ONNX_RUNTIME_LIB} 
     PRIVATE ${OpenCV_LIBRARIES}
-    PRIVATE ${GST_LIBRARIES} gstapp-1.0
+    PRIVATE ${GST_LIBRARIES} 
+    PUBLIC ObjectDet 
+    PUBLIC QUEUELIB
+    gstapp-1.0
     )

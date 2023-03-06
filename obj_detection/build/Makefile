@@ -57,10 +57,10 @@ RM = /usr/local/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/obj_detection
+CMAKE_SOURCE_DIR = /home/ryowa-peace/ryowa/ai/CLAVI_CPP/obj_detection
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/obj_detection/build
+CMAKE_BINARY_DIR = /home/ryowa-peace/ryowa/ai/CLAVI_CPP/obj_detection/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -87,9 +87,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/obj_detection/build/CMakeFiles /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/obj_detection/build//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/ryowa-peace/ryowa/ai/CLAVI_CPP/obj_detection/build/CMakeFiles /home/ryowa-peace/ryowa/ai/CLAVI_CPP/obj_detection/build//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/ryowa/ryowa/nreal/ai/CLAVI_CPP/obj_detection/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/ryowa-peace/ryowa/ai/CLAVI_CPP/obj_detection/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -129,53 +129,44 @@ objDetection/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/objDetection.dir/build.make CMakeFiles/objDetection.dir/build
 .PHONY : objDetection/fast
 
-CVQueue.o: CVQueue.cpp.o
-.PHONY : CVQueue.o
+#=============================================================================
+# Target rules for targets named ObjectDet
 
-# target to build an object file
-CVQueue.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/objDetection.dir/build.make CMakeFiles/objDetection.dir/CVQueue.cpp.o
-.PHONY : CVQueue.cpp.o
+# Build rule for target.
+ObjectDet: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 ObjectDet
+.PHONY : ObjectDet
 
-CVQueue.i: CVQueue.cpp.i
-.PHONY : CVQueue.i
+# fast build rule for target.
+ObjectDet/fast:
+	$(MAKE) $(MAKESILENT) -f include/CMakeFiles/ObjectDet.dir/build.make include/CMakeFiles/ObjectDet.dir/build
+.PHONY : ObjectDet/fast
 
-# target to preprocess a source file
-CVQueue.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/objDetection.dir/build.make CMakeFiles/objDetection.dir/CVQueue.cpp.i
-.PHONY : CVQueue.cpp.i
+#=============================================================================
+# Target rules for targets named QUEUELIB
 
-CVQueue.s: CVQueue.cpp.s
-.PHONY : CVQueue.s
+# Build rule for target.
+QUEUELIB: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 QUEUELIB
+.PHONY : QUEUELIB
 
-# target to generate assembly for a file
-CVQueue.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/objDetection.dir/build.make CMakeFiles/objDetection.dir/CVQueue.cpp.s
-.PHONY : CVQueue.cpp.s
+# fast build rule for target.
+QUEUELIB/fast:
+	$(MAKE) $(MAKESILENT) -f include/queue/CMakeFiles/QUEUELIB.dir/build.make include/queue/CMakeFiles/QUEUELIB.dir/build
+.PHONY : QUEUELIB/fast
 
-ObjectDetection.o: ObjectDetection.cpp.o
-.PHONY : ObjectDetection.o
+#=============================================================================
+# Target rules for targets named CVPLOT
 
-# target to build an object file
-ObjectDetection.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/objDetection.dir/build.make CMakeFiles/objDetection.dir/ObjectDetection.cpp.o
-.PHONY : ObjectDetection.cpp.o
+# Build rule for target.
+CVPLOT: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CVPLOT
+.PHONY : CVPLOT
 
-ObjectDetection.i: ObjectDetection.cpp.i
-.PHONY : ObjectDetection.i
-
-# target to preprocess a source file
-ObjectDetection.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/objDetection.dir/build.make CMakeFiles/objDetection.dir/ObjectDetection.cpp.i
-.PHONY : ObjectDetection.cpp.i
-
-ObjectDetection.s: ObjectDetection.cpp.s
-.PHONY : ObjectDetection.s
-
-# target to generate assembly for a file
-ObjectDetection.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/objDetection.dir/build.make CMakeFiles/objDetection.dir/ObjectDetection.cpp.s
-.PHONY : ObjectDetection.cpp.s
+# fast build rule for target.
+CVPLOT/fast:
+	$(MAKE) $(MAKESILENT) -f include/plot/CMakeFiles/CVPLOT.dir/build.make include/plot/CMakeFiles/CVPLOT.dir/build
+.PHONY : CVPLOT/fast
 
 main.o: main.cpp.o
 .PHONY : main.o
@@ -209,13 +200,10 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
+	@echo "... CVPLOT"
+	@echo "... ObjectDet"
+	@echo "... QUEUELIB"
 	@echo "... objDetection"
-	@echo "... CVQueue.o"
-	@echo "... CVQueue.i"
-	@echo "... CVQueue.s"
-	@echo "... ObjectDetection.o"
-	@echo "... ObjectDetection.i"
-	@echo "... ObjectDetection.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

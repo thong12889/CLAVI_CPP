@@ -1,16 +1,20 @@
 #include <iostream>
 #include "opencv2/opencv.hpp"
-#include "CVQueue.h"
+#include "include/queue/CVQueue.h"
 #include <thread>
 
 #include <iterator>
 #include <memory>
 #include <string>
 
-#include "ObjectDetection.h"
+#include "include/ObjectDetection.h"
 
 #include <onnxruntime_cxx_api.h>
 
+#include "include/plot/PerformancePlot.h"
+
+
+PerformancePlot *perf = new FPS("../log/" , "Performance Testing");
 CVQueue *q = new CVQueue(10);
 cv::Mat img_resize;
 
@@ -68,8 +72,10 @@ void ThreadDisplay(){
 			if(!temp.empty()){
 				cv::resize(temp, resizedImage, cv::Size(640, 640));
 				cv::dnn::blobFromImage(resizedImage, preprocessedImage);
+				perf->StartRecord();
 				obj->RunInference(preprocessedImage);
-				obj->DrawResult(resizedImage);
+				perf->Stamp();
+				//obj->DrawResult(resizedImage);
 
 				std::cout << "Get Frame" << std::endl;
 				cv::imshow("RTP" , resizedImage); 
@@ -166,5 +172,8 @@ int main(int argc, char* argv[]){
 	assert(pthread_setaffinity_np(display_thread.native_handle(), sizeof(cpu_set_t), &cpu_set_2) == 0);
 	queue_thread.join();
 	display_thread.join();
+	perf->Show();
+	perf->Save();
+	perf->End();
 }
 

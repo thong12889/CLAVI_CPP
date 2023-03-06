@@ -7,10 +7,13 @@ set(CMAKE_DEPENDS_GENERATOR "Unix Makefiles")
 # The top level Makefile was generated from the following files:
 set(CMAKE_MAKEFILE_DEPENDS
   "CMakeCache.txt"
-  "/home/ryowa/ryowa/nreal/ai/CLAVI_CPP/obj_detection/CMakeLists.txt"
+  "/home/ryowa-peace/ryowa/ai/CLAVI_CPP/obj_detection/CMakeLists.txt"
   "CMakeFiles/3.25.1/CMakeCCompiler.cmake"
   "CMakeFiles/3.25.1/CMakeCXXCompiler.cmake"
   "CMakeFiles/3.25.1/CMakeSystem.cmake"
+  "/home/ryowa-peace/ryowa/ai/CLAVI_CPP/obj_detection/include/CMakeLists.txt"
+  "/home/ryowa-peace/ryowa/ai/CLAVI_CPP/obj_detection/include/plot/CMakeLists.txt"
+  "/home/ryowa-peace/ryowa/ai/CLAVI_CPP/obj_detection/include/queue/CMakeLists.txt"
   "/usr/local/lib/cmake/opencv4/OpenCVConfig-version.cmake"
   "/usr/local/lib/cmake/opencv4/OpenCVConfig.cmake"
   "/usr/local/lib/cmake/opencv4/OpenCVModules-release.cmake"
@@ -46,9 +49,15 @@ set(CMAKE_MAKEFILE_OUTPUTS
 # Byproducts of CMake generate step:
 set(CMAKE_MAKEFILE_PRODUCTS
   "CMakeFiles/CMakeDirectoryInformation.cmake"
+  "include/CMakeFiles/CMakeDirectoryInformation.cmake"
+  "include/queue/CMakeFiles/CMakeDirectoryInformation.cmake"
+  "include/plot/CMakeFiles/CMakeDirectoryInformation.cmake"
   )
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/objDetection.dir/DependInfo.cmake"
+  "include/CMakeFiles/ObjectDet.dir/DependInfo.cmake"
+  "include/queue/CMakeFiles/QUEUELIB.dir/DependInfo.cmake"
+  "include/plot/CMakeFiles/CVPLOT.dir/DependInfo.cmake"
   )
