@@ -11,6 +11,7 @@
 #include <iostream>
 #include <limits>
 #include <numeric>
+#include <opencv2/imgproc/types_c.h>
 #include <string>
 
 #include <opencv2/core/core.hpp>
@@ -222,8 +223,8 @@ int main(int argc, char* argv[])
 
 	std::string instanceName{"object-detection-inference"};
 	std::string modelFilepath = argv[1];
-	std::string imageFilepath = argv[2];
-	std::string labelFilepath = argv[3];
+	std::string labelFilepath  = argv[2];
+	std::string imageFilepath  = argv[3];
 
 	Ort::Env env;
 	Ort::SessionOptions session_options;
@@ -292,11 +293,21 @@ int main(int argc, char* argv[])
 		start = clock();
 
 		cv::Mat imageBGR = cv::imread(imageFilepath, cv::ImreadModes::IMREAD_COLOR);
+		cv::cvtColor(imageBGR, imageBGR , CV_BGR2RGB);
 		cv::Mat preprocessedImage;
 
 		cv::Mat resizedImage;
 		cv::resize(imageBGR, resizedImage, cv::Size(INPUT_W, INPUT_H));
-		cv::dnn::blobFromImage(resizedImage, preprocessedImage, 1 / 127.5, cv::Size(INPUT_W, INPUT_H), cv::Scalar(0,0,0), true, false);
+		resizedImage.convertTo(resizedImage, CV_32F, 1 / 255.0);
+		cv::Mat channels[3];
+		cv::split(resizedImage, channels);
+
+		channels[0] = (channels[0] - 0.485) / 0.229;
+		channels[1] = (channels[1] - 0.456) / 0.224;
+		channels[2] = (channels[2] - 0.406) / 0.225;
+		cv::merge(channels, 3, resizedImage);
+
+		cv::dnn::blobFromImage(resizedImage, preprocessedImage); 
 
 		inputTensorValues.assign(preprocessedImage.begin<float>(), preprocessedImage.end<float>());
 
