@@ -4,8 +4,6 @@
 //ONNX RUNTIME LIB
 #include <onnxruntime_cxx_api.h>
 
-
-
 #include <chrono>
 #include <cmath>
 #include <exception>
@@ -21,6 +19,8 @@
 #include <iterator>
 #include <memory>
 
+#include "Instance.h"
+
 
 class InstanceSegmentation{
     public:
@@ -35,6 +35,7 @@ class InstanceSegmentation{
         
     private:
         std::vector<std::string> FindIndexClass(std::string&);
+        void get_candidates();
         std::string modelFilepath;
         std::vector<std::string> classes_label_;
         int num_classes_;
@@ -52,4 +53,12 @@ class InstanceSegmentation{
         size_t inputTensorSize;
         std::vector<float> inputTensorValues;
         Ort::MemoryInfo memoryInfo = Ort::MemoryInfo::CreateCpu(OrtAllocatorType::OrtArenaAllocator, OrtMemType::OrtMemTypeDefault);
+        const float* pred_; 
+        std::vector<int64_t> pred_dim; 
+        const int64_t* label_value_; 
+        const float* seg_;
+        std::vector<int64_t> seg_dim_;
+        std::vector<Instance> instances_;
+        float bbox_thresh_ = 0.5;
+        float mask_threh_ = 0.5;
 };

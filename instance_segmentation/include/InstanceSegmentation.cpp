@@ -62,8 +62,8 @@ Ort::Session InstanceSegmentation::SessionInit()
                         {
                                 this->inputDims.push_back(1);
                                 this->inputDims.push_back(3);
-                                this->inputDims.push_back(224);
-                                this->inputDims.push_back(224);
+                                this->inputDims.push_back(800);
+                                this->inputDims.push_back(1088);
                         }
                         else
                         {
@@ -87,21 +87,42 @@ void InstanceSegmentation::Inference(cv::Mat &preprocessedImage)
         this->inputTensors.push_back(Ort::Value::CreateTensor<float>(this->memoryInfo, this->inputTensorValues.data(), this->inputTensorSize, this->inputDims.data(), this->inputDims.size()));
         std::cout << this->outputNames[0] << std::endl;
         std::vector<Ort::Value> outputTensorValues = (*this->session_ptr_).Run(Ort::RunOptions{nullptr}, this->inputNames.data(), this->inputTensors.data(), this->numInputNodes, this->outputNames.data(), this->numOutputNodes);
-        std::cout << this->outputNames.size() << std::endl;
-        const float* pred = outputTensorValues[0].GetTensorMutableData<float>();
-        std::vector<int64_t> pred_dim = outputTensorValues[0].GetTensorTypeAndShapeInfo().GetShape();
-        std::vector<float> pred_list;
+        this->pred_ = outputTensorValues[0].GetTensorMutableData<float>();
+        this->pred_dim = outputTensorValues[0].GetTensorTypeAndShapeInfo().GetShape();
+        this->label_value_ = outputTensorValues[1].GetTensorMutableData<int64_t>();
+        this->seg_ = outputTensorValues[2].GetTensorMutableData<float>();
+        this->seg_dim_ = outputTensorValues[2].GetTensorTypeAndShapeInfo().GetShape();
+        this->get_candidates();
 
-        for(int i = 0; i < pred_dim[1]; i++)
-        {
-                pred_list.push_back(pred[i]);
-        }
-        std::vector<float>::iterator iter = std::max_element(pred_list.begin(), pred_list.end());
-        this->index_result_ = std::distance(pred_list.begin(), iter);
-        std::cout << "Result: " << classes_label_[index_result_] << std::endl;
-        std::cout << "Score : " << pred[index_result_]<< std::endl;
 }
 
+void InstanceSegmentation::get_candidates(){
+        Instance ins;
+        for(int batch = 0; batch < this->pred_dim[0]; batch++)
+        {
+                for(int cand = 0; cand < this->pred_dim[1]; cand++)
+                {
+                        int idx1 = cand * this->pred_dim[2];
+                        int idx2 = idx1 + 4;
+                        if(this->pred_[idx2] > this->bbox_thresh_)
+                        {
+                                int label_idx = idx1 / 5;
+                                
+                                ins.rect.x= this->pred_[idx1 + 1]; 
+                                ins.rect.y = this->pred_[idx1 + 1];
+                                ins.rect.width = this->pred_[idx1 + 2];
+                                ins.rect.height = this->pred_[idx1 + 3];
+                                ins.prob = this->pred_[idx1 + 4];
+                                ins.label = this->label_value_[label_idx];
+                                this->instances_.push_back(ins);
+                        }
+
+                }
+        }
+
+        
+}
+
+
 void InstanceSegmentation::DrawResult(cv::Mat &image){
-        cv::putText(image, classes_label_[index_result_], cv::Point(0,20) , cv::FONT_HERSHEY_SIMPLEX, 1,cv::Scalar(0,255,0) , false );
 }

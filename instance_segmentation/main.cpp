@@ -28,8 +28,8 @@
 #define NMS_THRESH 0.5
 #define BBOX_CONF_THRESH 0.3
 
-static const int INPUT_W = 224;
-static const int INPUT_H = 224;
+static const int INPUT_W = 1088;
+static const int INPUT_H = 800;
 
 template <typename T>
 T vectorProduct(const std::vector<T>& v)
@@ -76,12 +76,13 @@ int main(int argc, char* argv[])
 	
 	Ort::Session session = instance->SessionInit();
 	cv::Mat imageBGR = cv::imread(imageFilepath, cv::ImreadModes::IMREAD_COLOR);
+	cv::Mat preprocessedImage, resizedImage;
 
 	for(int n = 0; n < 10; n++){
 
-		cv::Mat preprocessedImage, resizedImage;
+		cv::resize(imageBGR, resizedImage, cv::Size(1088, 800));
+		resizedImage.convertTo(resizedImage, CV_32F, 1 / 255.0);
 
-		cv::resize(imageBGR, resizedImage, cv::Size(800, 1088 ));
 		cv::dnn::blobFromImage(resizedImage, preprocessedImage);
 
 		perf->StartRecord();		
