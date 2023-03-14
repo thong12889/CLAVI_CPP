@@ -1,4 +1,6 @@
 #include <iostream>
+#include <opencv2/core/types.hpp>
+#include <opencv2/imgproc.hpp>
 #include <vector>
 #include "InstanceSegmentation.h"
 
@@ -97,6 +99,7 @@ void InstanceSegmentation::Inference(cv::Mat &preprocessedImage)
 }
 
 void InstanceSegmentation::get_candidates(){
+        this->instances_.clear();
         Instance ins;
         for(int batch = 0; batch < this->pred_dim[0]; batch++)
         {
@@ -108,10 +111,10 @@ void InstanceSegmentation::get_candidates(){
                         {
                                 int label_idx = idx1 / 5;
                                 
-                                ins.rect.x= this->pred_[idx1 + 1]; 
+                                ins.rect.x= this->pred_[idx1 + 0]; 
                                 ins.rect.y = this->pred_[idx1 + 1];
-                                ins.rect.width = this->pred_[idx1 + 2];
-                                ins.rect.height = this->pred_[idx1 + 3];
+                                ins.rect.width = this->pred_[idx1 + 2] - this->pred_[idx1 + 0];
+                                ins.rect.height = this->pred_[idx1 + 3] - this->pred_[idx1 + 1];
                                 ins.prob = this->pred_[idx1 + 4];
                                 ins.label = this->label_value_[label_idx];
                                 this->instances_.push_back(ins);
@@ -125,4 +128,10 @@ void InstanceSegmentation::get_candidates(){
 
 
 void InstanceSegmentation::DrawResult(cv::Mat &image){
+        std::cout << this->instances_.size() << std::endl; 
+        for(int i = 0 ; i < this->instances_.size() ; i++)
+        {
+                Instance ins = this->instances_[i];
+                cv::rectangle(image, ins.rect , cv::Scalar(255,0,0) , 2);
+        }
 }

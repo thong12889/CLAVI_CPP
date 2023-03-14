@@ -76,7 +76,8 @@ int main(int argc, char* argv[])
 	
 	Ort::Session session = instance->SessionInit();
 	cv::Mat imageBGR = cv::imread(imageFilepath, cv::ImreadModes::IMREAD_COLOR);
-	cv::Mat preprocessedImage, resizedImage;
+	cv::Mat preprocessedImage, resizedImage , img_display;
+	img_display = imageBGR.clone();
 
 	for(int n = 0; n < 10; n++){
 
@@ -89,11 +90,11 @@ int main(int argc, char* argv[])
 		instance->Inference(preprocessedImage);
 		perf->Stamp();
 
-		instance->DrawResult(resizedImage);
+		cv::resize(img_display , img_display  , cv::Size(1088, 800));
+		instance->DrawResult(img_display);
 
-		cv::resize(resizedImage, resizedImage, cv::Size(500, 500));
 
-		cv::imshow("Test" , resizedImage);
+		cv::imshow("Test" , img_display);
 		if(cv::waitKey(30) == 'q'){
 			break;
 		}
