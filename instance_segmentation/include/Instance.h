@@ -6,7 +6,7 @@
 class Instance{
     public:
         cv::Rect_<float> rect;
-        cv::Mat *seg;
+        cv::Mat seg;
         int label;
         float prob;
 };

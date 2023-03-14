@@ -1,5 +1,7 @@
 #include <iostream>
+#include <opencv2/core/matx.hpp>
 #include <opencv2/core/types.hpp>
+#include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 #include <vector>
 #include "InstanceSegmentation.h"
@@ -13,6 +15,9 @@ InstanceSegmentation::InstanceSegmentation(std::string modelFilepath, std::strin
         this->modelFilepath = modelFilepath;
         this->classes_label_ = this->FindIndexClass(labelFilepath);
         this->num_classes_ = classes_label_.size();
+        this->color_list.push_back(cv::Vec3b(255,255,255));
+        this->color_list.push_back(cv::Vec3b(0,0,0));
+
 }
 
 std::vector<std::string> InstanceSegmentation::FindIndexClass(std::string &path){
@@ -69,20 +74,20 @@ Ort::Session InstanceSegmentation::SessionInit()
                         }
                         else
                         {
-                        inputDims = getInputDims;
+                                inputDims = getInputDims;
                         }
-                        const char* outputName0 = session.GetOutputName(0, allocator);
-                        const char* outputName1 = session.GetOutputName(1 , allocator);
-                        const char* outputName2 = session.GetOutputName(2 , allocator);
-                        this->inputNames.push_back(inputName);
-                        this->outputNames.push_back(outputName0);
-                        this->outputNames.push_back(outputName1);
-                        this->outputNames.push_back(outputName2);
-                        this->inputTensorSize = vectorProduct(this->inputDims);
-                        this->inputTensorValues.push_back(this->inputTensorSize);
-                        this->session_ptr_ = &session;
-                        return session;
-                }
+                                const char* outputName0 = session.GetOutputName(0, allocator);
+                                const char* outputName1 = session.GetOutputName(1 , allocator);
+                                const char* outputName2 = session.GetOutputName(2 , allocator);
+                                this->inputNames.push_back(inputName);
+                                this->outputNames.push_back(outputName0);
+                                this->outputNames.push_back(outputName1);
+                                this->outputNames.push_back(outputName2);
+                                this->inputTensorSize = vectorProduct(this->inputDims);
+                                this->inputTensorValues.push_back(this->inputTensorSize);
+                                this->session_ptr_ = &session;
+                                return session;
+}
 void InstanceSegmentation::Inference(cv::Mat &preprocessedImage)
 {
         this->inputTensorValues.assign(preprocessedImage.begin<float>(), preprocessedImage.end<float>());
@@ -101,37 +106,64 @@ void InstanceSegmentation::Inference(cv::Mat &preprocessedImage)
 void InstanceSegmentation::get_candidates(){
         this->instances_.clear();
         Instance ins;
+        int width,height;
         for(int batch = 0; batch < this->pred_dim[0]; batch++)
         {
                 for(int cand = 0; cand < this->pred_dim[1]; cand++)
                 {
+	                cv::Mat mat_temp = cv::Mat(cv::Size(this->seg_dim_[3],this->seg_dim_[2]) , CV_8UC3 , cv::Scalar(0,0,0));
+                        int mask_ind = cand * this->seg_dim_[3] * this->seg_dim_[2];
                         int idx1 = cand * this->pred_dim[2];
                         int idx2 = idx1 + 4;
+                        int label_idx = idx1 / 5;
                         if(this->pred_[idx2] > this->bbox_thresh_)
                         {
-                                int label_idx = idx1 / 5;
-                                
                                 ins.rect.x= this->pred_[idx1 + 0]; 
                                 ins.rect.y = this->pred_[idx1 + 1];
                                 ins.rect.width = this->pred_[idx1 + 2] - this->pred_[idx1 + 0];
                                 ins.rect.height = this->pred_[idx1 + 3] - this->pred_[idx1 + 1];
                                 ins.prob = this->pred_[idx1 + 4];
                                 ins.label = this->label_value_[label_idx];
+
+                                for(int i = 0 ; i < (seg_dim_[2]*seg_dim_[3])  ; i++)
+                                {
+                                        width = i%this->seg_dim_[3];
+                                        height = std::floor(i/this->seg_dim_[2]);
+
+                                        if(seg_[mask_ind + i] > this->mask_threh_ )
+                                        {
+                                                mat_temp.at<cv::Vec3b>(height,width)[0] = this->color_list[0][0];
+                                                mat_temp.at<cv::Vec3b>(height,width)[1] = this->color_list[0][1];
+                                                mat_temp.at<cv::Vec3b>(height,width)[2] = this->color_list[0][2];
+                                                
+                                        }
+                                        else
+                                        {
+                                                mat_temp.at<cv::Vec3b>(height,width)[0] = this->color_list[1][0];
+                                                mat_temp.at<cv::Vec3b>(height,width)[1] = this->color_list[1][1];
+                                                mat_temp.at<cv::Vec3b>(height,width)[2] = this->color_list[1][2];
+                                        }
+                                }
+
+                                cv::resize(mat_temp, mat_temp, cv::Size(ins.rect.width,ins.rect.height));
+                                ins.seg = mat_temp;
+
                                 this->instances_.push_back(ins);
                         }
 
                 }
         }
-
-        
 }
-
-
 void InstanceSegmentation::DrawResult(cv::Mat &image){
         std::cout << this->instances_.size() << std::endl; 
         for(int i = 0 ; i < this->instances_.size() ; i++)
         {
+
                 Instance ins = this->instances_[i];
+                cv::Mat img_roi = image(cv::Rect(ins.rect.x , ins.rect.y , ins.rect.width , ins.rect.height));
+                img_roi = (img_roi * (1 - this->opacity_)) + (ins.seg * this->opacity_)  ;
                 cv::rectangle(image, ins.rect , cv::Scalar(255,0,0) , 2);
+                //cv::imshow("MASK" , ins.seg);
+                //cv::waitKey(0);
         }
 }

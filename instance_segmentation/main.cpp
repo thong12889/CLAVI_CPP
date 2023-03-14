@@ -77,9 +77,9 @@ int main(int argc, char* argv[])
 	Ort::Session session = instance->SessionInit();
 	cv::Mat imageBGR = cv::imread(imageFilepath, cv::ImreadModes::IMREAD_COLOR);
 	cv::Mat preprocessedImage, resizedImage , img_display;
-	img_display = imageBGR.clone();
 
-	for(int n = 0; n < 10; n++){
+	for(int n = 0; n < 1000; n++){
+		img_display = imageBGR.clone();
 
 		cv::resize(imageBGR, resizedImage, cv::Size(1088, 800));
 		resizedImage.convertTo(resizedImage, CV_32F, 1 / 255.0);

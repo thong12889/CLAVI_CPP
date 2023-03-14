@@ -1,4 +1,5 @@
 #include<iostream>
+#include <opencv2/core/matx.hpp>
 #include <vector>
 
 //ONNX RUNTIME LIB
@@ -59,6 +60,8 @@ class InstanceSegmentation{
         const float* seg_;
         std::vector<int64_t> seg_dim_;
         std::vector<Instance> instances_;
+        std::vector<cv::Vec3b> color_list;
         float bbox_thresh_ = 0.5;
         float mask_threh_ = 0.5;
+        float opacity_ = 0.6;
 };
